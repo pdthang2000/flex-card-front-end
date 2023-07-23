@@ -6,7 +6,7 @@ const Home = () => {
   return (
     <div className={'p-10'}>
       <Row>
-        <Col span={10} className={'h-10 bg-black border-0 rounded-full my-auto'}>
+        <Col span={10}>
           <SearchBar />
         </Col>
         <Col span={4} offset={10}>

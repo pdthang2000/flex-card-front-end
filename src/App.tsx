@@ -5,15 +5,15 @@ import {Menu, MenuProps} from "antd";
 
 const items: MenuProps['items'] = [
   {
-    label: 'Home',
+    label: <div className={'text-white'}>Home</div>,
     key: 'home',
   },
   {
-    label: 'Sets',
+    label: <div className={'text-white'}>Sets</div>,
     key: 'sets',
   },
   {
-    label: 'Navigation Three',
+    label: <div className={'text-white'}>Navigation Three</div>,
     key: 'map',
   },
 ];
@@ -29,7 +29,7 @@ function App() {
       <div className={'bg-black min-h-screen'}>
         <div className={'w-4/5 mx-auto bg-violet-950 h-fit min-h-screen'}>
           <Menu
-            className={'pl-10 pt-5 w-full bg-violet-950 text-white hover:text-white text-xl'}
+            className={'pl-7 pt-5 w-full bg-violet-950 text-xl'}
             onClick={clickMenu}
             items={items}
             mode={'horizontal'}
