@@ -8,8 +8,7 @@ import {selectCardListLoading} from "./selector";
 const sagas = [
   takeLeading(loadingCardList, function* ({payload}) {
     const loading: boolean = yield select(selectCardListLoading);
-    console.log('loading', loading);
-    // if (loading) return;
+    if (!loading) return;
 
     try {
       const response: IResponse<Card[]> = yield call(mainPageService.list, payload);

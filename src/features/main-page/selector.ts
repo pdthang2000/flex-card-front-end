@@ -3,7 +3,6 @@ import {createSelector} from "@reduxjs/toolkit";
 
 
 export const selectCategoryState = (state: AppState) => {
-  console.log('mainPage: ', state);
   return state.mainPage;
 }
 

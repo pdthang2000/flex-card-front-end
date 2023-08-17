@@ -7,7 +7,9 @@ export const SearchBar = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(loadingCardList({}));
+    dispatch(loadingCardList({
+      take: 100
+    }));
   }, [dispatch]);
 
   return (

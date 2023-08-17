@@ -3,9 +3,26 @@ import {SearchBar} from "./SearchBar";
 import FlashCard from "../../../components/FlashCard/FlashCard";
 import {useSelector} from "react-redux";
 import {selectCardList} from "../selector";
+import {Card} from "../../../models/Card";
 
 const Home = () => {
   const cardList = useSelector(selectCardList);
+
+  const renderCardList = () => {
+    const rows = [];
+    const span = 5;
+    const offset = 1;
+    for (let i = 0; i < cardList.length; i += 4) {
+      const row = <Row className={'mb-10'} key={i}>
+        { cardList[i] ? <Col span={span}><FlashCard key={i} card={cardList[i] as Card} /></Col> : undefined }
+        { cardList[i + 1] ? <Col span={span} offset={offset}><FlashCard key={i + 1} card={cardList[i + 1] as Card} /></Col> : undefined }
+        { cardList[i + 2] ? <Col span={span} offset={offset}><FlashCard key={i + 2} card={cardList[i + 2] as Card} /></Col> : undefined }
+        { cardList[i + 3] ? <Col span={span} offset={offset}><FlashCard key={i + 3} card={cardList[i + 3] as Card} /></Col> : undefined }
+      </Row>
+      rows.push(row);
+    }
+    return rows.map(row => row);
+  }
 
   return (
     <div className={'p-10'}>
@@ -17,17 +34,7 @@ const Home = () => {
         </Col>
       </Row>
       <div className={'mt-10'}>
-        <Row>
-          {
-            cardList.map((card, index) => {
-              if (!card) return undefined;
-
-              return <Col span={5} offset={index % 4 === 0 ? 0 : 1} className={'pt-10'}>
-                      <FlashCard card={card}/>
-                    </Col>
-            })
-          }
-        </Row>
+        {renderCardList()}
       </div>
     </div>
   )

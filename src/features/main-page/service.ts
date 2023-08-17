@@ -7,7 +7,7 @@ export class MainPageService {
   private readonly NAME_SPACE = `${BACKEND_URL}/card`;
 
   list = (payload: any) => {
-    return axios.get<IResponse<Card>>(`${this.NAME_SPACE}`, payload);
+    return axios.get<IResponse<Card>>(`${this.NAME_SPACE}`, {params: payload}) ;
   }
 }
 
