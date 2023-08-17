@@ -21,7 +21,6 @@ const items: MenuProps['items'] = [
 function App() {
   const navigate = useNavigate();
   const clickMenu = (e: any) => {
-    console.log(e.key);
     navigate(e.key);
   };
 

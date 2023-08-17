@@ -1,8 +1,12 @@
 import {Col, Row} from "antd";
 import {SearchBar} from "./SearchBar";
 import FlashCard from "../../../components/FlashCard/FlashCard";
+import {useSelector} from "react-redux";
+import {selectCardList} from "../selector";
 
 const Home = () => {
+  const cardList = useSelector(selectCardList);
+
   return (
     <div className={'p-10'}>
       <Row>
@@ -14,18 +18,15 @@ const Home = () => {
       </Row>
       <div className={'mt-10'}>
         <Row>
-          <Col span={5}>
-            <FlashCard />
-          </Col>
-          <Col span={5} offset={1}>
-            <FlashCard />
-          </Col>
-          <Col span={5} offset={1}>
-            <FlashCard />
-          </Col>
-          <Col span={5} offset={1}>
-            <FlashCard />
-          </Col>
+          {
+            cardList.map((card, index) => {
+              if (!card) return undefined;
+
+              return <Col span={5} offset={index % 4 === 0 ? 0 : 1} className={'pt-10'}>
+                      <FlashCard card={card}/>
+                    </Col>
+            })
+          }
         </Row>
       </div>
     </div>

@@ -1,7 +1,14 @@
-
+import {useDispatch} from "react-redux";
+import {useEffect} from "react";
+import {loadingCardList} from "../reducer";
 
 
 export const SearchBar = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(loadingCardList({}));
+  }, [dispatch]);
 
   return (
     <div  className={'h-10 bg-black border-0 rounded-full my-auto'}>
