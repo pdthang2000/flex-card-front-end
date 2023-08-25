@@ -18,3 +18,10 @@ code {
 .select-sets {
   color: white !important;
 }
+
+.bg-main {
+  background-color: #0A092D;
+}
+.bg-sub-main {
+  background-color: #2E3856;
+}

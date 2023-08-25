@@ -15,10 +15,6 @@
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 }
 
-/*.flipCard:hover .flipCardInner {*/
-/*    transform: rotateX(180deg);*/
-/*}*/
-
 .flipping {
     transform: rotateX(180deg);
 }
@@ -33,7 +29,7 @@
 }
 
 .flipCardFront {
-    background-color: black;
+    background-color: #2E3856;
     color: white;
 }
 
