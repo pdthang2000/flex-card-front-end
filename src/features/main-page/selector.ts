@@ -13,3 +13,8 @@ export const selectCardListLoading = createSelector(
   selectCategoryState,
   (state) => state.loading,
 );
+
+export const selectPagination = createSelector(
+  selectCategoryState,
+  (state) => state.pagination,
+);

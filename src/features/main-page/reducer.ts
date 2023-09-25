@@ -12,8 +12,9 @@ const slices = createSlice({
       state.loading = true;
     },
     loadedCardList: (state, { payload }: PayloadAction<IResponse<Card[]>>) => {
-      state.ids = payload.data.data.map((card: Card) => card.id);
-      state.cards = keyBy(payload.data.data, 'id');
+      state.ids = payload.data.data.list.map((card: Card) => card.id);
+      state.cards = keyBy(payload.data.data.list, 'id');
+      state.pagination = payload.data.data.pagination;
       state.loading = false;
     },
   },

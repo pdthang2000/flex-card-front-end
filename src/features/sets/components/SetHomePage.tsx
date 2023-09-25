@@ -11,7 +11,7 @@ const SetHomePage = () => {
   return (
     <div className={'p-10'}>
       <Row className={'pb-10'}>
-        <Col span={5} className={''}>
+        <Col span={5}>
           <Select
             bordered={false}
             className={'h-full w-full rounded-2xl text-xl'}
