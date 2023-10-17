@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
+import { TextSize } from '../../enums';
 
 interface OverflowAdapterTextProps {
   text?: string;
+  textSize?: TextSize;
 }
 
-const OverflowAdapterText = ({ text }: OverflowAdapterTextProps) => {
+const OverflowAdapterText = ({ text, textSize }: OverflowAdapterTextProps) => {
   const [isOverflowing, setIsOverflowing] = useState(false);
 
   const frontTextRef = useRef<any>();
@@ -13,7 +15,7 @@ const OverflowAdapterText = ({ text }: OverflowAdapterTextProps) => {
     const checkOverflow = () => {
       if (frontTextRef.current) {
         if (
-          frontTextRef.current.scrollWidth > frontTextRef.current.clientWidth ||
+          // frontTextRef.current.scrollWidth > frontTextRef.current.clientWidth ||
           frontTextRef.current.scrollHeight > frontTextRef.current.clientHeight
         ) {
           setIsOverflowing(true);
@@ -34,7 +36,7 @@ const OverflowAdapterText = ({ text }: OverflowAdapterTextProps) => {
       className={`flex ${
         isOverflowing ? 'items-baseline' : 'items-center'
       } justify-center h-full overflow-auto 
-        text-lg p-5 break-words whitespace-pre-wrap`}
+        text-${textSize} px-5 pb-14 break-words whitespace-pre-wrap`}
       ref={frontTextRef}
     >
       {text}

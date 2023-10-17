@@ -26,7 +26,11 @@ code {
   background-color: $bgSubMain;
 }
 
-.test {
+.text-white-i {
+  color: white !important;
+}
+
+.custom-select {
   .ant-select-selector {
     background-color: black !important;
     color: white !important;
@@ -58,3 +62,38 @@ code {
     vertical-align: 0.1rem;
   }
 }
+.card-detail-display {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+}
+.swipe-left {
+  opacity: 0;
+  background-color: coral;
+  transform: translateX(-100%);
+}
+
+.swipe-right {
+  opacity: 0;
+  background-color: cornflowerblue;
+  transform: translateX(100%);
+}
+
+.swipe {
+  transition: transform ease-in-out 0.2s;
+}
+.japan-red-dot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.main-modal {
+  .ant-modal-content {
+    background-color: $bgSubMain;
+  }
+}
+
+.hover-text-white:hover {
+  color: white !important;
+}
+

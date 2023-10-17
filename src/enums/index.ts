@@ -3,3 +3,10 @@ export enum CardDisplayState {
   BACK = 'back',
   BOTH = 'both',
 }
+
+export enum TextSize {
+  XL = 'xl',
+  LARGE = 'lg',
+  MEDIUM = 'md',
+  SMALL = 'sm',
+}

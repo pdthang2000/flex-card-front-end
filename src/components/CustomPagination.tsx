@@ -36,7 +36,6 @@ const CustomPagination = ({
     navigate(`${location.pathname}?${queryParams.toString()}`);
     dispatch(fetchDataForPage({ page }));
   };
-
   return (
     <Pagination
       current={currentPage}

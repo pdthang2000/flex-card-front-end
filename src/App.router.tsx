@@ -3,6 +3,8 @@ import Home from './features/main-page/components/Home';
 import App from './App';
 import SetHomePage from './features/sets/components/SetHomePage';
 import CreateSet from './features/sets/components/create-set/CreateSet';
+import React from 'react';
+import SetDetail from './features/sets/components/SetDetail';
 
 export const router = createBrowserRouter([
   {
@@ -23,6 +25,10 @@ export const router = createBrowserRouter([
           {
             path: 'create',
             element: <CreateSet />,
+          },
+          {
+            path: ':id',
+            element: <SetDetail />,
           },
         ],
       },

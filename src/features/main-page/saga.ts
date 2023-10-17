@@ -2,7 +2,7 @@ import { all, call, put, select, takeLeading } from 'redux-saga/effects';
 import { loadedCardList, loadingCardList } from './reducer';
 import { Card } from '../../models/Card';
 import mainPageService from './service';
-import { IResponse } from '../../models/IResponse';
+import { DefaultIListResponse } from '../../models/IResponse';
 import { selectCardListLoading } from './selector';
 
 const sagas = [
@@ -11,11 +11,11 @@ const sagas = [
     if (!loading) return;
 
     try {
-      const response: IResponse<Card[]> = yield call(
+      const response: DefaultIListResponse<Card[]> = yield call(
         mainPageService.list,
         payload,
       );
-      yield put(loadedCardList(response));
+      yield put(loadedCardList(response.data));
     } catch (e) {
       console.log(e);
     }

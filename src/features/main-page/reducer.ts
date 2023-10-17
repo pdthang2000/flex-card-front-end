@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { MainPageState } from './state';
-import { IResponse } from '../../models/IResponse';
+import { IListResponse } from '../../models/IResponse';
 import { Card } from '../../models/Card';
 import { keyBy } from 'lodash';
 
@@ -11,10 +11,13 @@ const slices = createSlice({
     loadingCardList: (state, { payload }: PayloadAction<any>) => {
       state.loading = true;
     },
-    loadedCardList: (state, { payload }: PayloadAction<IResponse<Card[]>>) => {
-      state.ids = payload.data.data.list.map((card: Card) => card.id);
-      state.cards = keyBy(payload.data.data.list, 'id');
-      state.pagination = payload.data.data.pagination;
+    loadedCardList: (
+      state,
+      { payload }: PayloadAction<IListResponse<Card[]>>,
+    ) => {
+      state.ids = payload.data.list.map((card: Card) => card.id);
+      state.cards = keyBy(payload.data.list, 'id');
+      state.pagination = payload.data.pagination;
       state.loading = false;
     },
   },

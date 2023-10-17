@@ -1,4 +1,4 @@
-import styles from './FlashCard/FlashCard.module.scss';
+import styles from './FlashCard.module.scss';
 import OverflowAdapterText from './OverflowAdapterText';
 import { Divider } from 'antd';
 

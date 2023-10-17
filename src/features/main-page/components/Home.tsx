@@ -2,7 +2,7 @@ import { Col, Row, Select, Space } from 'antd';
 import { SearchBar } from './SearchBar';
 import FlashCard from '../../../components/FlashCard/FlashCard';
 import { useSelector } from 'react-redux';
-import { selectCardList, selectPagination } from '../selector';
+import { selectCardList, selectCardListPagination } from '../selector';
 import { Card } from '../../../models/Card';
 import { useCallback, useState } from 'react';
 import { CaretDownOutlined } from '@ant-design/icons';
@@ -16,7 +16,7 @@ const Home = () => {
     CardDisplayState.FRONT,
   );
 
-  const pagination = useSelector(selectPagination);
+  const pagination = useSelector(selectCardListPagination);
   const cardList = useSelector(selectCardList);
 
   const renderCardList = useCallback(() => {
@@ -33,7 +33,12 @@ const Home = () => {
 
         if (card) {
           columns.push(
-            <Col key={cardIndex} span={span} offset={j > 0 ? offset : 0}>
+            <Col
+              key={cardIndex}
+              span={span}
+              offset={j > 0 ? offset : 0}
+              className={'h-48'}
+            >
               <FlashCard card={card as Card} state={cardState} />
             </Col>,
           );
@@ -73,7 +78,7 @@ const Home = () => {
           <Select
             size={'large'}
             defaultValue={CardDisplayState.FRONT}
-            className={'test w-3/4'}
+            className={'custom-select w-3/4'}
             onChange={handleChange}
             suffixIcon={<CaretDownOutlined className={'text-white'} />}
           >

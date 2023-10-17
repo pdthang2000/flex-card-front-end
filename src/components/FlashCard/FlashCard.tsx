@@ -1,29 +1,22 @@
 import styles from './FlashCard.module.scss';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card } from '../../models/Card';
-import { CardDisplayState } from '../../enums';
-import OverflowAdapterText from '../OverflowAdapterText';
-import { Button, Dropdown, MenuProps } from 'antd';
-import BothSideDisplay from '../BothSideDisplay';
-import { MoreOutlined } from '@ant-design/icons';
-
-const items: MenuProps['items'] = [
-  {
-    key: '2',
-    label: <div>2nd menu item</div>,
-  },
-  {
-    key: '3',
-    label: <div>2nd menu item</div>,
-  },
-];
+import { CardDisplayState, TextSize } from '../../enums';
+import OverflowAdapterText from './OverflowAdapterText';
+import BothSideDisplay from './BothSideDisplay';
+import CardUtilButtons from './CardUtilButtons';
 
 interface FlashCardProps {
   card: Card;
   state?: CardDisplayState;
+  textSize?: TextSize;
 }
 
-const FlashCard = ({ card, state }: FlashCardProps) => {
+const FlashCard = ({
+  card,
+  state,
+  textSize = TextSize.MEDIUM,
+}: FlashCardProps) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
@@ -46,7 +39,7 @@ const FlashCard = ({ card, state }: FlashCardProps) => {
   };
 
   return (
-    <div className={'relative'}>
+    <div className={`relative h-full`}>
       {!state || state !== CardDisplayState.BOTH ? (
         <div className={styles.flipCard} onClick={onCardClick}>
           <div
@@ -54,32 +47,21 @@ const FlashCard = ({ card, state }: FlashCardProps) => {
               ${isFlipped ? styles.flipping : ''}`}
           >
             <div className={styles.flipCardFront}>
-              <div className={'flex justify-end'}>
-                <Dropdown menu={{ items }} placement="bottomLeft">
-                  <Button
-                    className={
-                      'flex items-center justify-center text-white text-xl'
-                    }
-                    shape={'circle'}
-                    type={'text'}
-                  >
-                    <MoreOutlined />
-                  </Button>
-                </Dropdown>
-              </div>
-              <div className={'h-full -mt-8'}>
-                <OverflowAdapterText text={card.front} />
+              <div className={'h-full pb-10'}>
+                <CardUtilButtons card={card} />
+                <OverflowAdapterText text={card?.front} textSize={textSize} />
               </div>
             </div>
             <div className={styles.flipCardBack}>
-              <div className={'p-2 h-full'}>
-                <OverflowAdapterText text={card.back} />
+              <div className={'h-full pb-10'}>
+                <CardUtilButtons card={card} />
+                <OverflowAdapterText text={card?.back} textSize={textSize} />
               </div>
             </div>
           </div>
         </div>
       ) : (
-        <BothSideDisplay front={card.front} back={card.back} />
+        <BothSideDisplay front={card?.front} back={card?.back} />
       )}
     </div>
   );

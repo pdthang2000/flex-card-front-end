@@ -2,14 +2,14 @@
 .flipCard {
     background-color: transparent;
     width: 100%;
-    height: 12rem;
+    height: 100%;
     cursor: pointer;
 }
 
 .flipCardBoth {
   background-color: transparent;
   width: 100%;
-  height: 24rem;
+  height: 200%;
   cursor: pointer;
 }
 
@@ -34,6 +34,7 @@
     height: 100%;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
+    padding: 2rem 2.5rem;
 }
 
 .flipCardFront {
