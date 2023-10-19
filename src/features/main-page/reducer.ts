@@ -3,12 +3,13 @@ import { MainPageState } from './state';
 import { IListResponse } from '../../models/IResponse';
 import { Card } from '../../models/Card';
 import { keyBy } from 'lodash';
+import { CardListPayload } from '../../payloads/CardListPayload';
 
 const slices = createSlice({
   name: 'MainPage',
   initialState: { ...new MainPageState() },
   reducers: {
-    loadingCardList: (state, { payload }: PayloadAction<any>) => {
+    loadingCardList: (state, { payload }: PayloadAction<CardListPayload>) => {
       state.loading = true;
     },
     loadedCardList: (
