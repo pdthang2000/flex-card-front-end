@@ -3,8 +3,10 @@ import { Card } from '../../models/Card';
 import { PaginationObject } from '../../models/PaginationObject';
 
 export class MainPageState {
-  ids: string[] = [];
+  cardIds: string[] = [];
   cards: Dictionary<Card> = {};
   loading = false;
+  setId = '';
+  setTitle = '';
   pagination: PaginationObject = {};
 }

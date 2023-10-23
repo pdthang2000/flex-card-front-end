@@ -1,7 +1,8 @@
 export enum CardDisplayState {
   FRONT = 'front',
   BACK = 'back',
-  BOTH = 'both',
+  VERTICAL = 'vertical',
+  HORIZONTAL = 'horizontal',
 }
 
 export enum TextSize {

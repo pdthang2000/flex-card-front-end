@@ -1,14 +1,13 @@
 import { all, call, put, takeLeading } from 'redux-saga/effects';
-import { loadedSet, loadingSet } from './reducer';
 import { DefaultIResponse } from '../../models/IResponse';
 import setService from './service';
+import { loadedSet, loadingSet } from '../main-page/reducer';
+import { Sett } from '../../models/Sett';
 
 const sagas = [
   takeLeading(loadingSet, function* ({ payload }) {
-    // const loading: boolean = yield select(selectCardListLoading);
-    // if (!loading) return;
     try {
-      const response: DefaultIResponse<any> = yield call(
+      const response: DefaultIResponse<Sett> = yield call(
         setService.getSet,
         payload,
       );

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Card } from '../../models/Card';
 import { CardDisplayState, TextSize } from '../../enums';
 import OverflowAdapterText from './OverflowAdapterText';
-import BothSideDisplay from './BothSideDisplay';
+import BothSideVerticalCard from './BothSideVerticalCard';
 import CardUtilButtons from './CardUtilButtons';
 
 interface FlashCardProps {
@@ -32,7 +32,7 @@ const FlashCard = ({
     if (e.target.localName !== 'p') {
       return;
     }
-    if (state !== CardDisplayState.BOTH) {
+    if (state !== CardDisplayState.VERTICAL) {
       setIsFlipped(!isFlipped);
     }
     return;
@@ -40,28 +40,36 @@ const FlashCard = ({
 
   return (
     <div className={`relative h-full`}>
-      {!state || state !== CardDisplayState.BOTH ? (
+      {!state || state !== CardDisplayState.VERTICAL ? (
         <div className={styles.flipCard} onClick={onCardClick}>
           <div
             className={`${styles.flipCardInner}
               ${isFlipped ? styles.flipping : ''}`}
           >
             <div className={styles.flipCardFront}>
-              <div className={'h-full pb-10'}>
-                <CardUtilButtons card={card} />
-                <OverflowAdapterText text={card?.front} textSize={textSize} />
+              <div className={'h-full'}>
+                <div className={'w-full h-[15%]'}>
+                  <CardUtilButtons card={card} />
+                </div>
+                <div className={'w-full h-4/5'}>
+                  <OverflowAdapterText text={card?.front} textSize={textSize} />
+                </div>
               </div>
             </div>
             <div className={styles.flipCardBack}>
-              <div className={'h-full pb-10'}>
-                <CardUtilButtons card={card} />
-                <OverflowAdapterText text={card?.back} textSize={textSize} />
+              <div className={'h-full'}>
+                <div className={'w-full h-[15%]'}>
+                  <CardUtilButtons card={card} />
+                </div>
+                <div className={'w-full h-4/5'}>
+                  <OverflowAdapterText text={card?.back} textSize={textSize} />
+                </div>
               </div>
             </div>
           </div>
         </div>
       ) : (
-        <BothSideDisplay front={card?.front} back={card?.back} />
+        <BothSideVerticalCard card={card} />
       )}
     </div>
   );

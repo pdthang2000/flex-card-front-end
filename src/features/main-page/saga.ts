@@ -1,11 +1,15 @@
 import { all, call, put, select, takeLeading } from 'redux-saga/effects';
-import { loadedCardList, loadingCardList } from './reducer';
+import {
+  loadedCardList,
+  loadingCardList,
+  updatedCard,
+  updatingCard,
+} from './reducer';
 import { Card } from '../../models/Card';
 import mainPageService from './service';
 import { DefaultIListResponse, DefaultIResponse } from '../../models/IResponse';
 import { selectCardListLoading } from './selector';
 import { unset } from 'lodash';
-import { updatedCard, updatingCard } from '../sets/reducer';
 
 const sagas = [
   takeLeading(loadingCardList, function* ({ payload }) {

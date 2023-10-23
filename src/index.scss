@@ -19,9 +19,14 @@ code {
   color: white !important;
 }
 
+.h-1-10 {
+  height: 10%;
+}
+
 .bg-main {
   background-color: $bgMain;
 }
+
 .bg-sub-main {
   background-color: $bgSubMain;
 }
@@ -40,6 +45,7 @@ code {
     color: white !important;
   }
 }
+
 .ant-select-dropdown {
   background-color: black !important;
   .ant-space-item {
@@ -62,11 +68,13 @@ code {
     vertical-align: 0.1rem;
   }
 }
+
 .card-detail-display {
   display: flex;
   width: 100%;
   overflow: hidden;
 }
+
 .swipe-left {
   opacity: 0;
   background-color: coral;
@@ -82,11 +90,13 @@ code {
 .swipe {
   transition: transform ease-in-out 0.2s;
 }
+
 .japan-red-dot {
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .main-modal {
   .ant-modal-content {
     background-color: $bgSubMain;

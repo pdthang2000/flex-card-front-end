@@ -1,17 +1,17 @@
 import FlashCard from '../../../components/FlashCard/FlashCard';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { loadingSet } from '../reducer';
 import { useParams } from 'react-router-dom';
-import { selectCardsInSet } from '../selector';
 import { CardDisplayState, TextSize } from '../../../enums';
 import { Button } from 'antd';
 import { ArrowLeftOutlined, ArrowRightOutlined } from '@ant-design/icons';
+import { loadingSet } from '../../main-page/reducer';
+import { selectCardList } from '../../main-page/selector';
 
 const SetDetail = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
-  const cards = useSelector(selectCardsInSet);
+  const cards = useSelector(selectCardList);
 
   const [currentId, setCurrentId] = useState(0);
   const [displayCards, setDisplayCards] = useState<any[]>([]);

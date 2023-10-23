@@ -36,7 +36,7 @@ const OverflowAdapterText = ({ text, textSize }: OverflowAdapterTextProps) => {
       className={`flex ${
         isOverflowing ? 'items-baseline' : 'items-center'
       } justify-center h-full overflow-auto 
-        text-${textSize} px-5 pb-14 break-words whitespace-pre-wrap`}
+        text-${textSize} pr-3 break-words whitespace-pre-wrap`}
       ref={frontTextRef}
     >
       {text}

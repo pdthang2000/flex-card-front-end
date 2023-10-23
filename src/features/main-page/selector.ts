@@ -6,7 +6,7 @@ export const selectMainPageState = (state: AppState) => {
 };
 
 export const selectCardList = createSelector(selectMainPageState, (state) =>
-  state.ids.map((id) => state.cards[id]),
+  state.cardIds.map((id) => state.cards[id]),
 );
 
 export const selectCardListLoading = createSelector(
@@ -17,4 +17,9 @@ export const selectCardListLoading = createSelector(
 export const selectCardListPagination = createSelector(
   selectMainPageState,
   (state) => state.pagination,
+);
+
+export const selectSetId = createSelector(
+  selectMainPageState,
+  (state) => state.setId,
 );

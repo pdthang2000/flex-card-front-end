@@ -3,12 +3,13 @@ import { SearchBar } from './SearchBar';
 import FlashCard from '../../../components/FlashCard/FlashCard';
 import { useSelector } from 'react-redux';
 import { selectCardList, selectCardListPagination } from '../selector';
-import { Card } from '../../../models/Card';
 import { useCallback, useState } from 'react';
 import { CaretDownOutlined } from '@ant-design/icons';
-import { CardDisplayState } from '../../../enums';
+import { CardDisplayState, TextSize } from '../../../enums';
 import CustomPagination from '../../../components/CustomPagination';
 import { loadingCardList } from '../reducer';
+import BothSideHorizontalCard from '../../../components/FlashCard/BothSideHorizontalCard';
+
 const { Option } = Select;
 
 const Home = () => {
@@ -19,11 +20,22 @@ const Home = () => {
   const pagination = useSelector(selectCardListPagination);
   const cardList = useSelector(selectCardList);
 
-  const renderCardList = useCallback(() => {
+  const renderHorizontalCard = useCallback(() => {
     const rows = [];
-    const span = 5;
+    for (const card of cardList) {
+      if (!card) {
+        continue;
+      }
+      rows.push(<BothSideHorizontalCard card={card} />);
+    }
+    return rows;
+  }, [cardList, cardState]);
+
+  const renderDefaultCard = useCallback(() => {
+    const rows = [];
+    const span = 11;
     const offset = 1;
-    const cardsPerRow = 4;
+    const cardsPerRow = 2;
 
     for (let i = 0; i < cardList.length; i += cardsPerRow) {
       const columns = [];
@@ -37,9 +49,15 @@ const Home = () => {
               key={cardIndex}
               span={span}
               offset={j > 0 ? offset : 0}
-              className={'h-48'}
+              className={`${
+                cardState === CardDisplayState.VERTICAL ? 'h-80' : 'h-64'
+              }`}
             >
-              <FlashCard card={card as Card} state={cardState} />
+              <FlashCard
+                card={card}
+                state={cardState}
+                textSize={TextSize.LARGE}
+              />
             </Col>,
           );
         }
@@ -78,7 +96,7 @@ const Home = () => {
           <Select
             size={'large'}
             defaultValue={CardDisplayState.FRONT}
-            className={'custom-select w-3/4'}
+            className={'custom-select w-full'}
             onChange={handleChange}
             suffixIcon={<CaretDownOutlined className={'text-white'} />}
           >
@@ -90,7 +108,13 @@ const Home = () => {
           </Select>
         </Col>
       </Row>
-      <div className={'mt-10'}>{renderCardList()}</div>
+      <div className={'mt-10'}>
+        {(cardState === CardDisplayState.FRONT ||
+          cardState === CardDisplayState.BACK ||
+          cardState === CardDisplayState.VERTICAL) &&
+          renderDefaultCard()}
+        {cardState === CardDisplayState.HORIZONTAL && renderHorizontalCard()}
+      </div>
       <div className={'flex justify-center items-center w-full'}>
         <CustomPagination
           className={'bg-sub-main w-fit rounded-md'}

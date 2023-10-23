@@ -44,7 +44,7 @@ const CardInput = ({
             className={'text-white placeholder-gray-500 w-full p-0'}
             placeholder={'Front card description...'}
             bordered={false}
-            maxLength={100}
+            maxLength={1024}
             autoSize
             onFocus={() => setIsFrontFocused(true)}
             onBlur={() => setIsFrontFocused(false)}
@@ -55,7 +55,7 @@ const CardInput = ({
                 isFrontFocused ? ' bg-yellow-500 h-1 ' : ' bg-white h-0.5 '
               }`}
             />
-            <p className={'text-xs pt-1'}>FRONT</p>
+            <p className={'text-xs pt-1 text-slate-400'}>FRONT</p>
           </div>
         </Col>
         <Col span={11} offset={1}>
@@ -63,7 +63,7 @@ const CardInput = ({
             className={'text-white placeholder-gray-500 w-full p-0'}
             placeholder={'Back card description...'}
             bordered={false}
-            maxLength={100}
+            maxLength={1024}
             autoSize
             onFocus={() => setIsBackFocused(true)}
             onBlur={() => setIsBackFocused(false)}
@@ -74,7 +74,7 @@ const CardInput = ({
                 isBackFocused ? ' bg-yellow-500 h-1 ' : ' bg-white h-0.5 '
               }`}
             />
-            <p className={'text-xs pt-1'}>BACK</p>
+            <p className={'text-xs pt-1 text-slate-400'}>BACK</p>
           </div>
         </Col>
       </Row>

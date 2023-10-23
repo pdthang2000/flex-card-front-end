@@ -2,20 +2,27 @@ import React, { useState } from 'react';
 import EditFlashcard from '../Modals/EditFlashcard';
 import { EditOutlined, StarOutlined } from '@ant-design/icons';
 import { Card } from '../../models/Card';
+import { useSelector } from 'react-redux';
+import { selectSetId } from '../../features/main-page/selector';
 interface CardUtilButtonsProps {
   card: Card;
 }
 const CardUtilButtons = ({ card }: CardUtilButtonsProps) => {
   const [openModal, setOpenModal] = useState(false);
+  const setId = useSelector(selectSetId);
 
   return (
-    <div className={'flex justify-end pb-5'}>
+    <div className={'w-full h-full flex justify-end'}>
       <EditFlashcard card={card} open={openModal} setOpen={setOpenModal} />
       <EditOutlined
-        className={'text-lg pr-5'}
+        className={'text-lg'}
         onClick={() => setOpenModal(!openModal)}
       />
-      <StarOutlined className={'text-lg'} />
+      {setId && (
+        <div className={'pl-3'}>
+          <StarOutlined className={'text-lg'} />
+        </div>
+      )}
     </div>
   );
 };
