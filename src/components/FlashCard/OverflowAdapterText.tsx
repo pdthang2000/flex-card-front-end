@@ -29,14 +29,13 @@ const OverflowAdapterText = ({ text, textSize }: OverflowAdapterTextProps) => {
     window.addEventListener('resize', checkOverflow);
 
     return () => window.removeEventListener('resize', checkOverflow);
-  }, []);
+  }, [text]);
 
   return (
     <p
-      className={`flex ${
-        isOverflowing ? 'items-baseline' : 'items-center'
-      } justify-center h-full overflow-auto 
-        text-${textSize} pr-3 break-words whitespace-pre-wrap`}
+      className={`flex overflow-auto ${textSize} ${
+        isOverflowing ? 'items-start' : 'items-center justify-center'
+      } h-full pr-3 break-words whitespace-pre-wrap tracking-wide leading-8`}
       ref={frontTextRef}
     >
       {text}

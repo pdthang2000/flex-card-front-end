@@ -1,9 +1,8 @@
 import { Dictionary } from '@reduxjs/toolkit';
-import { Card } from '../../models/Card';
+import { Sett } from '../../models/Sett';
 
 export class SetState {
-  cardIds: string[] = [];
-  cards: Dictionary<Card> = {};
+  setIds: string[] = [];
+  sets: Dictionary<Sett> = {};
   loading = false;
-  setId = '';
 }

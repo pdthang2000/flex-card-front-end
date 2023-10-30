@@ -1,6 +1,8 @@
 import { Col, Divider, Input, Row } from 'antd';
-import { DeleteOutlined, HolderOutlined } from '@ant-design/icons';
+import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
+import { faArrowsUpDown } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const { TextArea } = Input;
 
@@ -26,14 +28,16 @@ const CardInput = ({
       <div className={'flex justify-between items-center p-4'}>
         <div className={'text-md'}>{index}</div>
         <div>
-          <HolderOutlined
+          <FontAwesomeIcon
+            icon={faArrowsUpDown}
             ref={setActivatorNodeRef}
             {...props}
-            className={'mr-4 hover:text-yellow-300'}
+            className={'mr-4 hover:text-yellow-300 cursor-pointer'}
           />
-          <DeleteOutlined
-            className={'hover:text-yellow-300'}
+          <FontAwesomeIcon
+            icon={faTrashCan}
             onClick={() => handleRemove(id)}
+            className={'hover:text-yellow-300 cursor-pointer'}
           />
         </div>
       </div>

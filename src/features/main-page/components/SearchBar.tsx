@@ -2,6 +2,7 @@ import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { loadingCardList } from '../reducer';
 import { useLocation, useParams } from 'react-router-dom';
+import { SearchOutlined } from '@ant-design/icons';
 
 export const SearchBar = () => {
   const dispatch = useDispatch();
@@ -28,12 +29,15 @@ export const SearchBar = () => {
   }, [dispatch, paramPage, location.search]);
 
   return (
-    <div className={'h-10 bg-black border-0 rounded-full my-auto'}>
-      <h3
-        className={'text-white my-auto h-full flex items-center ml-3 text-xl'}
-      >
-        SearchBar
-      </h3>
+    <div className={'h-full w-full rounded-b-md'}>
+      <input
+        size={100}
+        placeholder={`Input set's title ...`}
+        className={'custom-search'}
+      />
+      <SearchOutlined
+        className={'text-gray-400 absolute text-xl right-3 top-2 '}
+      />
     </div>
   );
 };

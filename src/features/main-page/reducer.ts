@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { MainPageState } from './state';
 import { IListResponse, IResponse } from '../../models/IResponse';
 import { Card } from '../../models/Card';
-import { cloneDeep, keyBy } from 'lodash';
+import { keyBy } from 'lodash';
 import { CardListPayload } from '../../payloads/CardListPayload';
 import { Sett } from '../../models/Sett';
 
@@ -36,10 +36,9 @@ const slices = createSlice({
       console.log();
     },
     updatedCard: (state, { payload }: PayloadAction<IResponse<Card>>) => {
-      const newCards = cloneDeep(state.cards);
-      newCards[payload.data.id] = payload.data;
-      state.cards = newCards;
+      state.cards[payload.data.id] = payload.data;
     },
+    shufflingCardList: (state) => {},
   },
 });
 

@@ -6,8 +6,9 @@ export enum CardDisplayState {
 }
 
 export enum TextSize {
-  XL = 'xl',
-  LARGE = 'lg',
-  MEDIUM = 'md',
-  SMALL = 'sm',
+  XXL = 'text-2xl',
+  XL = 'text-xl',
+  LARGE = 'text-lg',
+  MEDIUM = 'text-md',
+  SMALL = 'text-sm',
 }

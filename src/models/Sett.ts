@@ -4,4 +4,5 @@ export interface Sett {
   id: string;
   title: string;
   cards: Card[];
+  cardCount: number;
 }

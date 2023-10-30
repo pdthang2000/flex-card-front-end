@@ -4,11 +4,12 @@ import FlashCard from '../../../components/FlashCard/FlashCard';
 import { useSelector } from 'react-redux';
 import { selectCardList, selectCardListPagination } from '../selector';
 import { useCallback, useState } from 'react';
-import { CaretDownOutlined } from '@ant-design/icons';
+import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { CardDisplayState, TextSize } from '../../../enums';
 import CustomPagination from '../../../components/CustomPagination';
 import { loadingCardList } from '../reducer';
 import BothSideHorizontalCard from '../../../components/FlashCard/BothSideHorizontalCard';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const { Option } = Select;
 
@@ -80,10 +81,10 @@ const Home = () => {
   return (
     <div className={'p-10'}>
       <Row>
-        <Col span={10}>
+        <Col span={11} className={'h-12'}>
           <SearchBar />
         </Col>
-        <Col span={8} offset={2} className={'flex items-center'}>
+        <Col span={7} offset={1} className={'flex items-center'}>
           <CustomPagination
             className={'bg-sub-main w-fit rounded-md h-fit'}
             total={pagination.total ?? 0}
@@ -98,7 +99,13 @@ const Home = () => {
             defaultValue={CardDisplayState.FRONT}
             className={'custom-select w-full'}
             onChange={handleChange}
-            suffixIcon={<CaretDownOutlined className={'text-white'} />}
+            suffixIcon={
+              <FontAwesomeIcon
+                size={'lg'}
+                icon={faCaretDown}
+                className={'text-white mr-2'}
+              />
+            }
           >
             {Object.values(CardDisplayState).map((state) => (
               <Option key={state} value={state} label={state}>

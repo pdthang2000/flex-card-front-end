@@ -11,6 +11,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+::-ms-input-placeholder { /* Edge 12-18 */
+  color: lightgray !important;
+}
+
+::placeholder {
+  color: lightgray !important;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
@@ -44,6 +52,26 @@ code {
   .ant-select-selection-item {
     color: white !important;
   }
+}
+
+.custom-search {
+  height: 100%;
+  width: 100%;
+  border-radius: 0.5rem;
+  background-color: $bgSubMain;
+  padding-left: 10px;
+  color: white;
+  font-size: 1.2rem;
+}
+.custom-search:focus-visible {
+  outline: none !important;
+}
+.hover-none:hover {
+  border-color: $gray600 !important;
+}
+
+.hover-none:focus-visible {
+  outline: none !important;
 }
 
 .ant-select-dropdown {
@@ -100,6 +128,14 @@ code {
 .main-modal {
   .ant-modal-content {
     background-color: $bgSubMain;
+    box-shadow: none;
+  }
+}
+
+.loading-modal {
+  .ant-modal-content {
+    background-color: transparent;
+    box-shadow: none;
   }
 }
 

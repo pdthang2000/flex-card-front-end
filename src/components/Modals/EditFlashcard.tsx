@@ -1,10 +1,11 @@
 import { Button, Divider, Form, Input, Modal } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
+import { faX } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
 import { Card } from '../../models/Card';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'antd/es/form/Form';
 import { updatingCard } from '../../features/main-page/reducer';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface Setter {
   (open: boolean): void;
@@ -70,7 +71,9 @@ const EditFlashcard = ({ card, open, setOpen }: EditFlashcardProps) => {
             Save
           </Button>,
         ]}
-        closeIcon={<CloseOutlined className={'font-bold text-gray-300'} />}
+        closeIcon={
+          <FontAwesomeIcon size={'lg'} icon={faX} className={'text-gray-300'} />
+        }
       >
         <div className={'text-white pl-5'} style={{ maxHeight: '35rem' }}>
           <p className={'text-3xl font-bold mb-5'}>Edit</p>
