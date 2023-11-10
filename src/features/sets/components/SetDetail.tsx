@@ -1,38 +1,55 @@
 import FlashCard from '../../../components/FlashCard/FlashCard';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { CardDisplayState, TextSize } from '../../../enums';
 import { Button, Col, Row } from 'antd';
 import { loadingSet } from '../../main-page/reducer';
-import { selectCardList } from '../../main-page/selector';
+import {
+  selectCardList,
+  selectCardListLoading,
+  selectSetInformation,
+} from '../../main-page/selector';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowRight,
   faArrowLeft,
   faShuffle,
   faGear,
+  faEdit,
 } from '@fortawesome/free-solid-svg-icons';
 import { useLoadingContext } from '../../../contexts/LoadingContext';
 
 const SetDetail = () => {
   const dispatch = useDispatch();
+
   const { showLoading, hideLoading } = useLoadingContext();
-  const { id } = useParams();
+
+  const { setId } = useParams();
+
   const cards = useSelector(selectCardList);
+  const setInformation = useSelector(selectSetInformation);
+  const loading = useSelector(selectCardListLoading);
 
   const [currentId, setCurrentId] = useState<number>(0);
   const [displayCards, setDisplayCards] = useState<any[]>([]);
   const [isShuffle, setIsShuffle] = useState<boolean>(false);
 
   useEffect(() => {
-    dispatch(loadingSet(id));
+    console.log(loading);
+    if (loading) {
+      showLoading();
+    } else {
+      hideLoading();
+    }
+  }, [loading]);
+
+  useEffect(() => {
+    dispatch(loadingSet(setId));
   }, []);
 
   useEffect(() => {
-    showLoading();
     if (cards.length === 0) {
-      showLoading();
       return;
     }
     if (displayCards.length === 0) {
@@ -40,13 +57,13 @@ const SetDetail = () => {
         {
           id: 0,
           cardId: cards[0]?.id,
-          className: 'pt-10 w-full swipe',
+          className: `w-full swipe`,
           card: cards[0],
         },
         {
           id: 1,
           cardId: cards[1]?.id,
-          className: 'pt-10 swipe swipe-right',
+          className: `swipe swipe-right`,
           card: cards[1],
         },
       ]);
@@ -62,7 +79,6 @@ const SetDetail = () => {
       currentCards[index].card = cards[currentId];
       setDisplayCards(currentCards);
     }
-    hideLoading();
   }, [cards]);
 
   const shuffling = () => {
@@ -88,7 +104,7 @@ const SetDetail = () => {
     if (currentCards[0].id - 1 >= 0) {
       currentCards.unshift({
         id: currentCards[0].id - 1,
-        className: 'pt-10 swipe swipe-left',
+        className: `swipe swipe-left`,
         card: cards[currentCards[0].id - 1],
       });
     }
@@ -117,16 +133,19 @@ const SetDetail = () => {
     if (currentCards[currentCards.length - 1].id + 1 !== cards.length) {
       currentCards.push({
         id: currentCards[currentCards.length - 1].id + 1,
-        className: 'pt-10 swipe swipe-right',
+        className: `swipe swipe-right`,
         card: cards[currentCards[currentCards.length - 1].id + 1],
       });
     }
     setCurrentId(currentId + 1);
     setDisplayCards(currentCards);
   };
-
+  if (loading) {
+    return <></>;
+  }
   return (
-    <div className={'pl-10 w-4/5'}>
+    <div className={'w-4/5 pl-10 pb-10'}>
+      <p className={'text-white text-3xl py-3'}>{setInformation.title}</p>
       <div className={'card-detail-display'}>
         {displayCards.map((data) => (
           <div
@@ -138,7 +157,7 @@ const SetDetail = () => {
               <FlashCard
                 card={data.card}
                 state={CardDisplayState.FRONT}
-                textSize={TextSize.XXL}
+                textSize={TextSize.XXXL}
               />
             )}
           </div>
@@ -146,8 +165,24 @@ const SetDetail = () => {
       </div>
       {cards.length !== 0 && (
         <Row className={'pt-3'}>
-          <Col span={10}></Col>
-          <Col span={4}>
+          <Col span={8}>
+            <div className={'w-fit'}>
+              <Link to={'./edit'}>
+                <Button
+                  shape={'circle'}
+                  className={`japan-red-dot border-2 
+                            border-gray-600 w-14 h-14 mr-5`}
+                >
+                  <FontAwesomeIcon
+                    icon={faEdit}
+                    size={'xl'}
+                    style={{ color: 'white' }}
+                  />
+                </Button>
+              </Link>
+            </div>
+          </Col>
+          <Col span={8}>
             <div className={'flex justify-center w-full'}>
               <Button
                 shape={'circle'}
@@ -164,7 +199,9 @@ const SetDetail = () => {
                   }`}
                 />
               </Button>
-              <div className={'w-10'} />
+              <div className={'japan-red-dot w-16 text-white text-xl'}>
+                {currentId + 1} / {setInformation.cardCount}
+              </div>
               <Button
                 shape={'circle'}
                 className={`border-gray-600 border-2 japan-red-dot ${
@@ -184,7 +221,7 @@ const SetDetail = () => {
               </Button>
             </div>
           </Col>
-          <Col span={10} className={'flex justify-end'}>
+          <Col span={8} className={'flex justify-end'}>
             <Button
               shape={'circle'}
               className={`japan-red-dot border-2 

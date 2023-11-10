@@ -27,10 +27,6 @@ code {
   color: white !important;
 }
 
-.h-1-10 {
-  height: 10%;
-}
-
 .bg-main {
   background-color: $bgMain;
 }
@@ -42,7 +38,9 @@ code {
 .text-white-i {
   color: white !important;
 }
-
+.ant-form-item {
+  margin-bottom: 0;
+}
 .custom-select {
   .ant-select-selector {
     background-color: black !important;
@@ -94,6 +92,13 @@ code {
   }
   .anticon {
     vertical-align: 0.1rem;
+  }
+  .ant-pagination-options {
+    .ant-select-selector {
+      background-color: black;
+      color: white;
+      border-color: $bgSubMain;
+    }
   }
 }
 

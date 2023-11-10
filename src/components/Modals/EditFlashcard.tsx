@@ -77,18 +77,11 @@ const EditFlashcard = ({ card, open, setOpen }: EditFlashcardProps) => {
       >
         <div className={'text-white pl-5'} style={{ maxHeight: '35rem' }}>
           <p className={'text-3xl font-bold mb-5'}>Edit</p>
-          <div
-            className={'w-full mb-10 overflow-y-auto'}
-            style={{ maxHeight: '30rem' }}
-          >
+          <div className={'w-full mb-10 overflow-y-auto max-h-[30rem]'}>
             <div
               className={'w-full h-fit pb-1 break-words whitespace-pre-wrap'}
             >
-              <Form.Item
-                className={'mb-0'}
-                name="front"
-                initialValue={cardState.front}
-              >
+              <Form.Item name="front" initialValue={cardState.front}>
                 <TextArea
                   className={'text-white w-full p-0'}
                   style={{ fontSize: '20px' }}
@@ -103,12 +96,14 @@ const EditFlashcard = ({ card, open, setOpen }: EditFlashcardProps) => {
             <div className={'w-full pr-3'}>
               <Divider
                 className={`m-0 ${
-                  isFrontCardFocused ? ' bg-yellow-500 h-1' : ' bg-white h-0.5'
+                  isFrontCardFocused
+                    ? ' bg-yellow-500 h-1'
+                    : ' bg-gray-300 h-0.5'
                 }`}
               />
               <p
-                className={`text-xs pt-1 ${
-                  isFrontCardFocused ? ' text-yellow-500' : ' text-white'
+                className={`text-xs font-bold pt-1 ${
+                  isFrontCardFocused ? ' text-yellow-500' : ' text-gray-300'
                 }`}
               >
                 FRONT
@@ -119,11 +114,7 @@ const EditFlashcard = ({ card, open, setOpen }: EditFlashcardProps) => {
                 'w-full h-fit pb-1 pt-5 break-words whitespace-pre-wrap'
               }
             >
-              <Form.Item
-                className={'mb-0'}
-                name="back"
-                initialValue={cardState.back}
-              >
+              <Form.Item name="back" initialValue={cardState.back}>
                 <TextArea
                   name={'backCard'}
                   className={'text-white w-full p-0'}
@@ -140,15 +131,17 @@ const EditFlashcard = ({ card, open, setOpen }: EditFlashcardProps) => {
             <div className={'w-full pr-3'}>
               <Divider
                 className={`m-0 ${
-                  isBackCardFocused ? ' bg-yellow-500 h-1 ' : ' bg-white h-0.5 '
+                  isBackCardFocused
+                    ? ' bg-yellow-500 h-1 '
+                    : ' bg-gray-300 h-0.5 '
                 }`}
               />
               <p
-                className={`text-xs pt-1 ${
-                  isBackCardFocused ? ' text-yellow-500' : ' text-white'
+                className={`text-xs font-bold pt-1 ${
+                  isBackCardFocused ? ' text-yellow-500' : ' text-gray-300'
                 }`}
               >
-                DESCRIPTION
+                BACK
               </p>
             </div>
           </div>

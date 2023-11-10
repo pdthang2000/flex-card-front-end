@@ -17,20 +17,22 @@ const slices = createSlice({
       state,
       { payload }: PayloadAction<IListResponse<Card[]>>,
     ) => {
-      state.cardIds = payload.data.list.map((card: Card) => card.id);
-      state.cards = keyBy(payload.data.list, 'id');
-      state.pagination = payload.data.pagination;
       state.loading = false;
+      state.pagination = payload.data.pagination;
+      state.cards = keyBy(payload.data.list, 'id');
+      state.cardIds = payload.data.list.map((card: Card) => card.id);
     },
     loadingSet: (state, { payload }: PayloadAction<any>) => {
       state.loading = true;
     },
     loadedSet: (state, { payload }: PayloadAction<IResponse<Sett>>) => {
       state.loading = false;
-      state.cards = keyBy(payload.data.cards, 'id');
-      state.cardIds = payload.data.cards.map((card: Card) => card.id);
       state.setId = payload.data.id;
       state.setTitle = payload.data.title;
+      state.description = payload.data.description;
+      state.cards = keyBy(payload.data.cards, 'id');
+      state.cardCount = payload.data.cardCount;
+      state.cardIds = payload.data.cards.map((card: Card) => card.id);
     },
     updatingCard: (state, { payload }: PayloadAction<Card>) => {
       console.log();

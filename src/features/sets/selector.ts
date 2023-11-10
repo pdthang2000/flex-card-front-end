@@ -8,3 +8,8 @@ export const selectSetState = (state: AppState) => {
 export const selectSetList = createSelector(selectSetState, (state) =>
   state.setIds.map((id) => state.sets[id]),
 );
+
+export const selectSetStateLoading = createSelector(
+  selectSetState,
+  (state) => state.loading,
+);

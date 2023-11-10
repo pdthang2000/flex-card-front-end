@@ -11,7 +11,8 @@ interface CardInputProps {
   id: string;
   index: number;
   setActivatorNodeRef: any;
-  props: any;
+  propsDND: any;
+  propsForm?: any;
 }
 
 const CardInput = ({
@@ -19,19 +20,33 @@ const CardInput = ({
   index,
   setActivatorNodeRef,
   handleRemove,
-  props,
+  propsDND,
+  propsForm,
 }: CardInputProps) => {
   const [isFrontFocused, setIsFrontFocused] = useState(false);
   const [isBackFocused, setIsBackFocused] = useState(false);
+
+  const { value, onChange } = propsForm;
+
+  const onFrontChange = (event: any) => {
+    const text = event?.target?.value;
+    onChange({ ...value, front: text });
+  };
+
+  const onBackChange = (event: any) => {
+    const text = event?.target?.value;
+    onChange({ ...value, back: text });
+  };
+
   return (
-    <div className={'w-full h-fit rounded-md bg-sub-main my-5'}>
+    <div className={'w-full text-white h-fit rounded-md bg-sub-main my-3'}>
       <div className={'flex justify-between items-center p-4'}>
         <div className={'text-md'}>{index}</div>
         <div>
           <FontAwesomeIcon
             icon={faArrowsUpDown}
             ref={setActivatorNodeRef}
-            {...props}
+            {...propsDND}
             className={'mr-4 hover:text-yellow-300 cursor-pointer'}
           />
           <FontAwesomeIcon
@@ -52,6 +67,9 @@ const CardInput = ({
             autoSize
             onFocus={() => setIsFrontFocused(true)}
             onBlur={() => setIsFrontFocused(false)}
+            defaultValue={''}
+            value={value?.front ?? ''}
+            onChange={onFrontChange}
           />
           <div className={'w-full'}>
             <Divider
@@ -71,6 +89,9 @@ const CardInput = ({
             autoSize
             onFocus={() => setIsBackFocused(true)}
             onBlur={() => setIsBackFocused(false)}
+            defaultValue={''}
+            value={value?.back ?? ''}
+            onChange={onBackChange}
           />
           <div className={'w-full pb-2'}>
             <Divider

@@ -9,6 +9,7 @@ interface CustomPaginationProps {
   totalPages: number;
   pageSize: number;
   fetchDataForPage: (data: any) => any;
+  showSizeChanger?: boolean;
 }
 
 const CustomPagination = ({
@@ -16,6 +17,7 @@ const CustomPagination = ({
   pageSize,
   total,
   fetchDataForPage,
+  showSizeChanger = false,
 }: CustomPaginationProps) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -43,6 +45,7 @@ const CustomPagination = ({
       total={total}
       pageSize={pageSize}
       onChange={handlePageChange}
+      showSizeChanger={showSizeChanger}
     />
   );
 };

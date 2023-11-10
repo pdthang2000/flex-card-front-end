@@ -27,8 +27,8 @@ const BothSideHorizontalCard = ({ card }: CardInputProps) => {
                 {card.front}
               </div>
               <div className={'w-full pt-2'}>
-                <Divider className={`m-0 bg-white h-0.5`} />
-                <p className={'text-xs pt-1 text-slate-400'}>FRONT</p>
+                <Divider className={`m-0 bg-gray-300 h-0.5`} />
+                <p className={'text-xs pt-1 text-gray-300'}>FRONT</p>
               </div>
             </Col>
             <Col span={11} offset={1}>
@@ -40,8 +40,8 @@ const BothSideHorizontalCard = ({ card }: CardInputProps) => {
                 {card.back}
               </div>
               <div className={'w-full pt-2'}>
-                <Divider className={`m-0 bg-white h-0.5`} />
-                <p className={'text-xs pt-1 text-slate-400'}>BACK</p>
+                <Divider className={`m-0 bg-gray-300 h-0.5`} />
+                <p className={'text-xs pt-1 text-gray-300'}>BACK</p>
               </div>
             </Col>
           </Row>

@@ -93,7 +93,7 @@ const Home = () => {
             fetchDataForPage={loadingCardList}
           />
         </Col>
-        <Col span={4} offset={0}>
+        <Col span={4} offset={0} className={'flex items-center'}>
           <Select
             size={'large'}
             defaultValue={CardDisplayState.FRONT}

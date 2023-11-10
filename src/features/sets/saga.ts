@@ -3,7 +3,14 @@ import { DefaultIListResponse, DefaultIResponse } from '../../models/IResponse';
 import setService from './service';
 import { loadedSet, loadingSet } from '../main-page/reducer';
 import { Sett } from '../../models/Sett';
-import { loadedSetList, loadingSetList } from './reducer';
+import {
+  createdSet,
+  creatingSet,
+  loadedSetList,
+  loadingSetList,
+  updatedSet,
+  updatingSet,
+} from './reducer';
 
 const sagas = [
   takeLeading(loadingSet, function* ({ payload }) {
@@ -24,8 +31,32 @@ const sagas = [
         payload,
       );
       yield put(loadedSetList(response.data));
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.error(error);
+    }
+  }),
+  takeLeading(creatingSet, function* ({ payload }) {
+    try {
+      const response: DefaultIResponse<Sett> = yield call(
+        setService.create,
+        payload,
+      );
+      yield put(createdSet(response.data));
+    } catch (error) {
+      console.error(error);
+    }
+  }),
+  takeLeading(updatingSet, function* ({ payload }) {
+    try {
+      const response: DefaultIResponse<Sett> = yield call(
+        setService.update,
+        payload.id,
+        { ...payload, id: undefined },
+      );
+      console.log(response);
+      yield put(updatedSet(response));
+    } catch (error) {
+      console.error(error);
     }
   }),
 ];
