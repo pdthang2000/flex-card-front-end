@@ -1,12 +1,12 @@
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
-import { loadingCardList } from '../reducer';
+import { clearSetState, loadingCardList } from '../reducer';
 import { useLocation, useParams } from 'react-router-dom';
 import { SearchOutlined } from '@ant-design/icons';
 
 export const SearchBar = () => {
   const dispatch = useDispatch();
-  const { page: paramPage } = useParams(); // destructured directly
+  const { page: paramPage } = useParams();
   const location = useLocation();
 
   useEffect(() => {
@@ -26,6 +26,10 @@ export const SearchBar = () => {
         page: page,
       }),
     );
+
+    return () => {
+      dispatch(clearSetState());
+    };
   }, [dispatch, paramPage, location.search]);
 
   return (

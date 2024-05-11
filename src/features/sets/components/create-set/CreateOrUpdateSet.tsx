@@ -24,13 +24,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faX } from '@fortawesome/free-solid-svg-icons';
 import { SetActions } from '../../../../enums';
 import { useNavigate, useParams } from 'react-router-dom';
-import { loadingSet } from '../../../main-page/reducer';
+import {
+  removeNewSetId,
+  creatingSet,
+  loadingSet,
+  updatingSet,
+} from '../../../cards/reducer';
 import {
   selectCardListLoading,
+  selectNewSetId,
   selectSetFormObj,
-} from '../../../main-page/selector';
-import { creatingSet, updatingSet } from '../../reducer';
-import { useLoadingContext } from '../../../../contexts/LoadingContext';
+} from '../../../cards/selector';
 
 export const arrayMove = (array: any, oldIndex: any, newIndex: any) => {
   return dndKitArrayMove(array, oldIndex, newIndex);
@@ -85,12 +89,11 @@ const CreateOrUpdateSet = ({ type }: CreateOrEditSetProps) => {
 
   const cardFormObj = useSelector(selectSetFormObj);
   const setLoading = useSelector(selectCardListLoading);
+  const newSetId = useSelector(selectNewSetId);
 
   const [form] = useForm();
 
   const [api, contextHolder] = notification.useNotification();
-
-  const { showLoading, hideLoading } = useLoadingContext();
 
   const openNotification = () => {
     api.open({
@@ -112,6 +115,14 @@ const CreateOrUpdateSet = ({ type }: CreateOrEditSetProps) => {
   };
 
   useEffect(() => {
+    if (type === SetActions.CREATE && newSetId) {
+      const id = newSetId;
+      dispatch(removeNewSetId());
+      navigate(`../${id}`);
+    }
+  }, [newSetId]);
+
+  useEffect(() => {
     if (type === SetActions.UPDATE) {
       form.setFieldsValue(cardFormObj);
       const initItems: any[] = [];
@@ -131,25 +142,27 @@ const CreateOrUpdateSet = ({ type }: CreateOrEditSetProps) => {
     if (type === SetActions.CREATE) {
       form.resetFields();
       setItems(defaultItems);
+      // dispatch(clearSet());
     }
   }, [type]);
-  console.log(form.getFieldsValue());
 
   const onFinish = (values: any) => {
-    if (!values['1']) {
+    if (!values['0'] || !values['1']) {
       openNotification();
+      return;
     }
     if (type === SetActions.CREATE) {
       dispatch(creatingSet(values));
+      if (!setLoading) {
+        console.log(1234);
+        // navigate(`../${cardFormObj.setId}`);
+      }
     }
     if (type === SetActions.UPDATE) {
-      showLoading();
       dispatch(updatingSet({ ...values, id: setId }));
       if (!setLoading) {
-        hideLoading();
         navigate('../');
       }
-      hideLoading();
     }
   };
 

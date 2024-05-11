@@ -1,10 +1,10 @@
-import { BACKEND_URL } from '../../config/env-properties';
+import { BACKEND_URL } from '../../configs/env-properties';
 import { DefaultIListResponse } from '../../models/IResponse';
 import { Card } from '../../models/Card';
 import axios from 'axios';
 import { CardListPayload } from '../../payloads/CardListPayload';
 
-export class MainPageService {
+export class CardService {
   private readonly NAME_SPACE = `${BACKEND_URL}/card`;
 
   list = (payload: CardListPayload) => {
@@ -17,6 +17,6 @@ export class MainPageService {
   };
 }
 
-const mainPageService = new MainPageService();
+const cardService = new CardService();
 
-export default mainPageService;
+export default cardService;

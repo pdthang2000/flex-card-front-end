@@ -77,7 +77,13 @@ const CardInput = ({
                 isFrontFocused ? ' bg-yellow-500 h-1 ' : ' bg-white h-0.5 '
               }`}
             />
-            <p className={'text-xs pt-1 text-slate-400'}>FRONT</p>
+            <p
+              className={`text-xs pt-1 ${
+                isFrontFocused ? ' text-yellow-500' : ' text-gray-300'
+              }`}
+            >
+              FRONT
+            </p>
           </div>
         </Col>
         <Col span={11} offset={1}>

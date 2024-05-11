@@ -1,4 +1,4 @@
-import { BACKEND_URL } from '../../config/env-properties';
+import { BACKEND_URL } from '../../configs/env-properties';
 import axios from 'axios';
 import {
   CreateSetPayload,
@@ -20,6 +20,9 @@ export class SetService {
   };
   update = (id: string, payload: UpdateSetPayload) => {
     return axios.patch(`${this.NAME_SPACE}/${id}`, payload);
+  };
+  delete = (id: string) => {
+    return axios.delete(`${this.NAME_SPACE}/${id}`);
   };
 }
 

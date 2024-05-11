@@ -148,3 +148,9 @@ code {
   color: white !important;
 }
 
+.custom-dropdown {
+  .ant-dropdown-menu {
+    background-color: $bgMain;
+    border: 1px solid $gray600;
+  }
+}

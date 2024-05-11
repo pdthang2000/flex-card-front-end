@@ -1,13 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
-import mainPage from './features/main-page/reducer';
+import cardState from './features/cards/reducer';
 import AppSagas from './App.sagas';
 import { combineReducers } from 'redux';
-import set from './features/sets/reducer';
+import setState from './features/sets/reducer';
 
 const RootReducer = combineReducers({
-  mainPage,
-  set,
+  cardState,
+  setState,
 });
 
 const sagaMiddleware = createSagaMiddleware({

@@ -1,6 +1,6 @@
 export enum CardDisplayState {
-  FRONT = 'front',
   BACK = 'back',
+  FRONT = 'front',
   VERTICAL = 'vertical',
   HORIZONTAL = 'horizontal',
 }

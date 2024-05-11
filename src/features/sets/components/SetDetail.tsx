@@ -1,15 +1,20 @@
 import FlashCard from '../../../components/FlashCard/FlashCard';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { CardDisplayState, TextSize } from '../../../enums';
-import { Button, Col, Row } from 'antd';
-import { loadingSet } from '../../main-page/reducer';
+import { Button, Col, Dropdown, Row } from 'antd';
+import {
+  clearSetState,
+  loadingSet,
+  shufflingCardList,
+  unShufflingCardList,
+} from '../../cards/reducer';
 import {
   selectCardList,
   selectCardListLoading,
   selectSetInformation,
-} from '../../main-page/selector';
+} from '../../cards/selector';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowRight,
@@ -19,6 +24,7 @@ import {
   faEdit,
 } from '@fortawesome/free-solid-svg-icons';
 import { useLoadingContext } from '../../../contexts/LoadingContext';
+import DeleteSetButton from './DeleteSetButton';
 
 const SetDetail = () => {
   const dispatch = useDispatch();
@@ -36,7 +42,6 @@ const SetDetail = () => {
   const [isShuffle, setIsShuffle] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log(loading);
     if (loading) {
       showLoading();
     } else {
@@ -46,10 +51,13 @@ const SetDetail = () => {
 
   useEffect(() => {
     dispatch(loadingSet(setId));
+    return () => {
+      dispatch(clearSetState());
+    };
   }, []);
 
   useEffect(() => {
-    if (cards.length === 0) {
+    if (loading || cards.length === 0) {
       return;
     }
     if (displayCards.length === 0) {
@@ -82,6 +90,11 @@ const SetDetail = () => {
   }, [cards]);
 
   const shuffling = () => {
+    if (isShuffle) {
+      dispatch(unShufflingCardList());
+    } else {
+      dispatch(shufflingCardList());
+    }
     setIsShuffle(!isShuffle);
   };
 
@@ -123,7 +136,10 @@ const SetDetail = () => {
     }
 
     currentCards[0].className += ' swipe-left';
-    currentCards[0].className = currentCards[0].className.replace('w-full');
+    currentCards[0].className = currentCards[0].className.replace(
+      'w-full ',
+      '',
+    );
 
     currentCards[1].className = currentCards[1].className.replace(
       'swipe-right',
@@ -140,6 +156,17 @@ const SetDetail = () => {
     setCurrentId(currentId + 1);
     setDisplayCards(currentCards);
   };
+
+  const items = useMemo(
+    () => [
+      {
+        key: '1',
+        label: setId ? <DeleteSetButton setId={setId} /> : <></>,
+      },
+    ],
+    [setId],
+  );
+
   if (loading) {
     return <></>;
   }
@@ -222,24 +249,30 @@ const SetDetail = () => {
             </div>
           </Col>
           <Col span={8} className={'flex justify-end'}>
-            <Button
-              shape={'circle'}
-              className={`japan-red-dot border-2 
-                          border-gray-600 w-14 h-14 mr-5`}
+            <Dropdown
+              placement={'bottom'}
+              menu={{ items }}
+              overlayClassName={'custom-dropdown'}
             >
-              <FontAwesomeIcon
-                icon={faGear}
-                size={'2xl'}
-                style={{ color: 'white' }}
-              />
-            </Button>
+              <Button
+                shape={'circle'}
+                className={`japan-red-dot border-2 
+                            border-gray-600 w-14 h-14 mr-5`}
+              >
+                <FontAwesomeIcon
+                  icon={faGear}
+                  size={'2xl'}
+                  style={{ color: 'white' }}
+                />
+              </Button>
+            </Dropdown>
             <Button
               shape={'circle'}
-              className={`japan-red-dot ${
+              className={`japan-red-dot w-14 h-14 ${
                 isShuffle
                   ? 'border-4 border-gray-400'
                   : 'border-2 border-gray-600'
-              } w-14 h-14`}
+              }`}
               onClick={shuffling}
             >
               <FontAwesomeIcon

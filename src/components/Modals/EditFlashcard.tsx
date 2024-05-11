@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Card } from '../../models/Card';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'antd/es/form/Form';
-import { updatingCard } from '../../features/main-page/reducer';
+import { updatingCard } from '../../features/cards/reducer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface Setter {

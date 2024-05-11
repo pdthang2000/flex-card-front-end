@@ -1,4 +1,3 @@
-import { SearchBar } from '../../main-page/components/SearchBar';
 import { Col, Row, Select, Space } from 'antd';
 import SetCard from './SetCard';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,6 +5,8 @@ import { useEffect } from 'react';
 import { loadingSetList } from '../reducer';
 import { selectSetList } from '../selector';
 import { Link } from 'react-router-dom';
+import { selectCardListLoading } from '../../cards/selector';
+import { useLoadingContext } from '../../../contexts/LoadingContext';
 
 const { Option } = Select;
 
@@ -17,6 +18,17 @@ const SetHomePage = () => {
   const dispatch = useDispatch();
 
   const setList = useSelector(selectSetList);
+
+  const loading = useSelector(selectCardListLoading);
+  const { showLoading, hideLoading } = useLoadingContext();
+
+  useEffect(() => {
+    if (loading) {
+      showLoading();
+    } else {
+      hideLoading();
+    }
+  }, [loading]);
 
   useEffect(() => {
     dispatch(loadingSetList({}));
@@ -42,14 +54,14 @@ const SetHomePage = () => {
           </Select>
         </Col>
         <Col span={12} offset={1} className={'h-12'}>
-          <SearchBar />
+          {/*<SearchBar />*/}
         </Col>
       </Row>
       {setList.map((set) => {
         if (!set) return;
         return (
-          <Row className={'pb-5'} key={set.id}>
-            <Col span={18} className={'h-20'}>
+          <Row className={'h-20 mb-5'} key={set.id}>
+            <Col span={18}>
               <Link to={`${set.id}`}>
                 <SetCard set={set} />
               </Link>

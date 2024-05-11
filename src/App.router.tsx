@@ -1,11 +1,12 @@
 import { createBrowserRouter } from 'react-router-dom';
-import Home from './features/main-page/components/Home';
+import Home from './features/cards/components/Home';
 import App from './App';
 import SetHomePage from './features/sets/components/SetHomePage';
 import CreateOrUpdateSet from './features/sets/components/create-set/CreateOrUpdateSet';
 import React from 'react';
 import SetDetail from './features/sets/components/SetDetail';
 import { SetActions } from './enums';
+import { RouterActions, RouterNames } from './enums/router';
 
 export const router = createBrowserRouter([
   {
@@ -13,18 +14,18 @@ export const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: '/home',
+        path: RouterNames.HOME,
         element: <Home />,
       },
       {
-        path: '/sets',
+        path: RouterNames.SETS,
         children: [
           {
             path: '',
             element: <SetHomePage />,
           },
           {
-            path: 'create',
+            path: RouterActions.CREATE,
             element: <CreateOrUpdateSet type={SetActions.CREATE} />,
           },
           {
@@ -32,7 +33,7 @@ export const router = createBrowserRouter([
             element: <SetDetail />,
           },
           {
-            path: ':setId/edit',
+            path: `:setId/${RouterActions.EDIT}`,
             element: <CreateOrUpdateSet type={SetActions.UPDATE} />,
           },
         ],

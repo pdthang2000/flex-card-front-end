@@ -48,20 +48,20 @@ const FlashCard = ({
           >
             <div className={styles.flipCardFront}>
               <div className={'h-full'}>
-                <div className={'w-full h-[15%]'}>
+                <div className={'w-full h-[10%]'}>
                   <CardUtilButtons card={card} />
                 </div>
-                <div className={'w-full h-4/5'}>
+                <div className={'w-full h-4/5 pr-0.5'}>
                   <OverflowAdapterText text={card?.front} textSize={textSize} />
                 </div>
               </div>
             </div>
             <div className={styles.flipCardBack}>
               <div className={'h-full'}>
-                <div className={'w-full h-[15%]'}>
+                <div className={'w-full h-[10%]'}>
                   <CardUtilButtons card={card} />
                 </div>
-                <div className={'w-full h-4/5'}>
+                <div className={'w-full h-4/5 pr-[0.127rem]'}>
                   <OverflowAdapterText text={card?.back} textSize={textSize} />
                 </div>
               </div>

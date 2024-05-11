@@ -2,7 +2,7 @@ import AppState from '../../App.state';
 import { createSelector } from '@reduxjs/toolkit';
 
 export const selectSetState = (state: AppState) => {
-  return state.set;
+  return state.setState;
 };
 
 export const selectSetList = createSelector(selectSetState, (state) =>

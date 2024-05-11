@@ -18,8 +18,10 @@ const OverflowAdapterText = ({ text, textSize }: OverflowAdapterTextProps) => {
           // frontTextRef.current.scrollWidth > frontTextRef.current.clientWidth ||
           frontTextRef.current.scrollHeight > frontTextRef.current.clientHeight
         ) {
+          console.log('overflow', text?.[0]);
           setIsOverflowing(true);
         } else {
+          console.log('not-overflow', text?.[0]);
           setIsOverflowing(false);
         }
       }
@@ -29,7 +31,7 @@ const OverflowAdapterText = ({ text, textSize }: OverflowAdapterTextProps) => {
     window.addEventListener('resize', checkOverflow);
 
     return () => window.removeEventListener('resize', checkOverflow);
-  }, [text]);
+  });
 
   return (
     <p

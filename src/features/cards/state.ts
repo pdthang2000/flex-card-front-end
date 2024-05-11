@@ -2,13 +2,14 @@ import { Dictionary } from '@reduxjs/toolkit';
 import { Card } from '../../models/Card';
 import { PaginationObject } from '../../models/PaginationObject';
 
-export class MainPageState {
+export class CardState {
   cardIds: string[] = [];
   cards: Dictionary<Card> = {};
-  cardCount = 0;
+  cardCount? = 0;
   loading = false;
-  setId = '';
-  setTitle = '';
-  description = '';
+  setId? = '';
+  newSetId? = '';
+  setTitle? = '';
+  description? = '';
   pagination: PaginationObject = {};
 }

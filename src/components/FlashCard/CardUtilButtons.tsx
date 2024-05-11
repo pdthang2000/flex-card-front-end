@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import EditFlashcard from '../Modals/EditFlashcard';
 import { Card } from '../../models/Card';
 import { useSelector } from 'react-redux';
-import { selectSetId } from '../../features/main-page/selector';
+import { selectSetId } from '../../features/cards/selector';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar, faEdit } from '@fortawesome/free-regular-svg-icons';
 
