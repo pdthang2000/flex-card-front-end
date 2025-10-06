@@ -1,4 +1,11 @@
+/* app/globals.css */
+@import 'antd/dist/reset.css';
 @import "tailwindcss";
+
+/* Tailwind base/components/utilities remain below */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --background: #ffffff;
