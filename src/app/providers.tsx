@@ -1,24 +1,18 @@
-// app/providers.tsx
-'use client';
+// src/app/providers.tsx
+"use client";
 
-import { PropsWithChildren } from 'react';
-import { ConfigProvider, theme as antdTheme } from 'antd';
-import { StyleProvider } from '@ant-design/cssinjs';
+import { QueryClientProvider } from "@tanstack/react-query";
+import { ConfigProvider, App as AntdApp } from "antd";
+import {queryClient} from "@/lib/queryClient";
 
-export default function Providers({ children }: PropsWithChildren) {
+export default function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <StyleProvider hashPriority="high">
-      <ConfigProvider
-        theme={{
-          algorithm: antdTheme.defaultAlgorithm,
-          token: {
-            borderRadius: 8,
-            fontSize: 14,
-          },
-        }}
-      >
-        {children}
-      </ConfigProvider>
-    </StyleProvider>
+    <ConfigProvider>
+      <AntdApp>
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </AntdApp>
+    </ConfigProvider>
   );
 }
