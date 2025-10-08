@@ -218,7 +218,12 @@ const CardTile = ({
   onEdit: (card: Flashcard) => void;
 }) => {
   const [flipped, setFlipped] = useState(false);
-  const isFlipped = flipAll ? true : flipped;
+
+  useEffect(() => {
+    setFlipped(flipAll);
+  }, [flipAll]);
+
+  const isFlipped = flipped;
   const menuItems: MenuProps["items"] = useMemo(
     () => [
       {
