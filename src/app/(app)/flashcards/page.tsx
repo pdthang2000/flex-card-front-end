@@ -161,7 +161,7 @@ const BoardView = ({ items }: { items: Flashcard[] }) => {
           type={isShuffled ? "primary" : "default"}
           onClick={toggleShuffle}
         >
-          {isShuffled ? "Reset Order" : "Shuffle"}
+          {isShuffled ? "Shuffled" : "Shuffle"}
         </Button>
         <Button
           className="w-full sm:w-auto"
@@ -236,6 +236,10 @@ const CardTile = ({
   const handleMenuClick = useCallback<NonNullable<MenuProps["onClick"]>>(
     ({ key }) => {
       if (key === "edit") {
+        /* This setState is needed because if not, when we click the button, 
+          it'll automatically flip the card because it counted as click the card
+        */
+        setFlipped((prev) => !prev);
         onEdit(card);
       }
     },
