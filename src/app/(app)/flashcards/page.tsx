@@ -233,31 +233,32 @@ const CardTile = ({
     ],
     []
   );
+  const handleMenuClick = useCallback<NonNullable<MenuProps["onClick"]>>(
+    ({ key }) => {
+      if (key === "edit") {
+        onEdit(card);
+      }
+    },
+    [card, onEdit]
+  );
+
+  const renderActionButton = () => (
+    <Dropdown menu={{ items: menuItems, onClick: handleMenuClick }} trigger={["click"]}>
+      <button
+        type="button"
+        className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-slate-800/80 text-slate-100 hover:bg-slate-700"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+      >
+        <MoreOutlined />
+      </button>
+    </Dropdown>
+  );
 
   return (
     <div className="relative h-36 sm:h-40 md:h-44 [perspective:1200px]">
-      <Dropdown
-        menu={{
-          items: menuItems,
-          onClick: ({ key }) => {
-            if (key === "edit") {
-              onEdit(card);
-            }
-          },
-        }}
-        trigger={["click"]}
-      >
-        <button
-          type="button"
-          className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-slate-800/80 text-slate-100 hover:bg-slate-700"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          }}
-        >
-          <MoreOutlined />
-        </button>
-      </Dropdown>
       <button
         className={[
           "group relative w-full h-full rounded-2xl",
@@ -270,22 +271,24 @@ const CardTile = ({
         <div
           className={[
             "absolute inset-0 rounded-2xl bg-slate-800/80",
-            "flex items-center justify-center text-xl font-semibold tracking-wide text-white px-3 text-center",
+            "flex items-center justify-center text-xl font-semibold tracking-wide text-white",
             "[backface-visibility:hidden]",
           ].join(" ")}
         >
-          {card.front}
+          {renderActionButton()}
+          <span className="px-3 text-center">{card.front}</span>
         </div>
 
         {/* BACK */}
         <div
           className={[
             "absolute inset-0 rounded-2xl bg-slate-700/70",
-            "flex items-center justify-center text-base font-medium text-slate-200 px-3 text-center",
+            "flex items-center justify-center text-base font-medium text-slate-200",
             "[transform:rotateX(180deg)] [backface-visibility:hidden]",
           ].join(" ")}
         >
-          {card.back}
+          {renderActionButton()}
+          <span className="px-3 text-center">{card.back}</span>
         </div>
       </button>
     </div>
