@@ -6,6 +6,7 @@ import type { MenuProps } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useListFlashcards, useUpdateFlashcard } from "@/hooks/useFlashcards";
+import "./flashcards.css";
 
 export type Flashcard = {
   id: string;
@@ -183,6 +184,7 @@ const BoardView = ({ items }: { items: Flashcard[] }) => {
         okText="Update"
         onCancel={handleModalClose}
         onOk={handleUpdate}
+        rootClassName="flashcard-modal"
       >
         <Form form={form} layout="vertical">
           <Form.Item
