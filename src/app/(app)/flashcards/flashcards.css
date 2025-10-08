@@ -25,12 +25,14 @@
 
 .flashcard-modal .ant-btn-default {
   border-color: rgba(148, 163, 184, 0.4);
-  color: #e2e8f0;
+  color: #0f172a;
+  background-color: #e2e8f0;
 }
 
 .flashcard-modal .ant-btn-default:hover {
   border-color: rgba(148, 163, 184, 0.7);
-  color: #f8fafc;
+  color: #0f172a;
+  background-color: #f1f5f9;
 }
 
 .flashcard-modal .ant-btn-primary:hover {
@@ -49,6 +51,10 @@
 .flashcard-modal .ant-input-textarea textarea {
   background-color: #1e293b;
   color: #f8fafc;
+}
+
+.flashcard-modal .ant-form-item-label > label {
+  color: #0ea5e9 !important;
 }
 
 .flashcard-modal .ant-input::placeholder,
