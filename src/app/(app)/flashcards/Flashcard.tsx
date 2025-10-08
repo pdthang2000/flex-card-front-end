@@ -1,8 +1,15 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Dropdown } from "antd";
 import type { MenuProps } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import type { Flashcard as FlashcardType } from "@/hooks/useFlashcards";
+
+const MENU_ITEMS: MenuProps["items"] = [
+  {
+    key: "edit",
+    label: "Edit",
+  },
+];
 
 type FlashcardProps = {
   card: FlashcardType;
@@ -18,15 +25,6 @@ const Flashcard = ({ card, flipAll, onEdit }: FlashcardProps) => {
   }, [flipAll]);
 
   const toggleFlip = useCallback(() => setFlipped((s) => !s), []);
-  const menuItems: MenuProps["items"] = useMemo(
-    () => [
-      {
-        key: "edit",
-        label: "Edit",
-      },
-    ],
-    []
-  );
 
   const handleMenuClick = useCallback<NonNullable<MenuProps["onClick"]>>(
     ({ key }) => {
@@ -39,7 +37,7 @@ const Flashcard = ({ card, flipAll, onEdit }: FlashcardProps) => {
   );
 
   const renderActionButton = () => (
-    <Dropdown menu={{ items: menuItems, onClick: handleMenuClick }} trigger={["click"]}>
+    <Dropdown menu={{ items: MENU_ITEMS, onClick: handleMenuClick }} trigger={["click"]}>
       <button
         type="button"
         className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-slate-800/80 text-slate-100 hover:bg-slate-700 cursor-pointer"
