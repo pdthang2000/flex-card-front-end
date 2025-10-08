@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
-import {Segmented, Button, App, Table, Flex, Space} from 'antd';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import {Segmented, Button, Table, Space, Flex} from 'antd';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useListFlashcards } from '@/hooks/useFlashcards';
 
@@ -21,9 +21,8 @@ const FlashcardsPage = () => {
   const size = Number(sp.get("size") ?? 20);
   const layout = (sp.get("layout") ?? "board") as "board" | "table";
 
-  const { data, isFetching, isError } = useListFlashcards({ page, size });
+  const { data, isError } = useListFlashcards({ page, size });
   const items = data?.data?.items ?? [];
-  const total = data?.data?.pagination?.total ?? 0;
 
   const toggleLayout = () => {
     const next = layout === "board" ? "table" : "board";
@@ -47,7 +46,7 @@ const FlashcardsPage = () => {
       <Flex justify="space-between" align="center" className="mb-6">
         <h1 className="text-2xl font-semibold tracking-wide">Flashcards</h1>
         <Space>
-          <Button onClick={toggleLayout}>
+          <Button type="primary" onClick={toggleLayout}>
             Switch to {layout === "board" ? "Table" : "Board"} View
           </Button>
           <Segmented
@@ -62,7 +61,7 @@ const FlashcardsPage = () => {
       </Flex>
 
       {layout === "board" ? (
-        <NeonBoard items={items} />
+        <BoardView items={items} />
       ) : (
         <SimpleTable items={items} />
       )}
@@ -75,40 +74,59 @@ const FlashcardsPage = () => {
 };
 
 // -----------------------------
-// NeonBoard
+// BoardView
 // -----------------------------
-const NeonBoard = ({ items }: { items: Flashcard[] }) => {
-  const { message } = App.useApp();
-  const [cards, setCards] = useState(() => items);
+const BoardView = ({ items }: { items: Flashcard[] }) => {
+  const [cards, setCards] = useState(items);
   const [flipAll, setFlipAll] = useState(false);
+  const [isShuffled, setIsShuffled] = useState(false);
 
-  React.useEffect(() => setCards(items), [items]);
+  useEffect(() => {
+    setCards(items);
+    setFlipAll(false);
+    setIsShuffled(false);
+  }, [items]);
 
-  const shuffle = () => {
-    setCards((prev) => {
-      const a = [...prev];
-      for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-      }
-      return a;
-    });
+  const shuffleItems = useCallback(() => {
+    const shuffled = [...items];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }, [items]);
+
+  const toggleShuffle = () => {
+    if (isShuffled) {
+      setCards(items);
+      setIsShuffled(false);
+    } else {
+      setCards(shuffleItems());
+      setIsShuffled(true);
+    }
   };
 
   return (
     <div>
-      <Flex gap={12} className="mb-4">
-        <Button onClick={shuffle}>Shuffle</Button>
+      <div className="mb-4 flex w-full flex-col gap-3 sm:flex-row sm:gap-4">
         <Button
+          className="w-full sm:w-auto"
+          type={isShuffled ? "primary" : "default"}
+          onClick={toggleShuffle}
+        >
+          {isShuffled ? "Shuffled" : "Shuffle"}
+        </Button>
+        <Button
+          className="w-full sm:w-auto"
           type={flipAll ? "primary" : "default"}
           onClick={() => setFlipAll((s) => !s)}
         >
           {flipAll ? "Unflip All" : "Flip All"}
         </Button>
-      </Flex>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-6">
+      </div>
+      <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
         {cards.map((c) => (
-          <NeonCard key={c.id} title={c.front} back={c.back} flipAll={flipAll} />
+          <CardTile key={c.id} title={c.front} back={c.back} flipAll={flipAll} />
         ))}
       </div>
     </div>
@@ -116,9 +134,9 @@ const NeonBoard = ({ items }: { items: Flashcard[] }) => {
 };
 
 // -----------------------------
-// NeonCard (with vertical flip)
+// CardTile (with vertical flip)
 // -----------------------------
-const NeonCard = ({
+const CardTile = ({
                     title,
                     back,
                     flipAll,
@@ -144,9 +162,7 @@ const NeonCard = ({
         <div
           className={[
             "absolute inset-0 rounded-2xl bg-slate-800/80",
-            "flex items-center justify-center text-xl font-bold tracking-wide",
-            "ring-2 ring-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.6)]",
-            "neon-border",
+            "flex items-center justify-center text-xl font-semibold tracking-wide text-white",
             "[backface-visibility:hidden]",
           ].join(" ")}
         >
@@ -156,20 +172,13 @@ const NeonCard = ({
         {/* BACK */}
         <div
           className={[
-            "absolute inset-0 rounded-2xl bg-slate-950/80",
-            "flex items-center justify-center text-base font-semibold text-cyan-100",
-            "ring-2 ring-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.6)]",
-            "neon-border",
+            "absolute inset-0 rounded-2xl bg-slate-700/70",
+            "flex items-center justify-center text-base font-medium text-slate-200 px-3 text-center",
             "[transform:rotateX(180deg)] [backface-visibility:hidden]",
           ].join(" ")}
         >
           {back}
         </div>
-
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -right-2 -bottom-2 w-full h-full rounded-2xl border border-cyan-400/40 blur-[1px] opacity-60"
-        />
       </button>
     </div>
   );
