@@ -5,7 +5,7 @@ import { Segmented, Button, Table, Space, Flex, Dropdown, Modal, Form, Input, Ap
 import type { MenuProps } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useListFlashcards, useUpdateFlashcard } from "@/hooks/useFlashcards";
+import { useListFlashcards, useUpdateFlashcard, useCreateFlashcard } from "@/hooks/useFlashcards";
 import "./flashcards.css";
 
 export type Flashcard = {
@@ -84,8 +84,11 @@ const BoardView = ({ items }: { items: Flashcard[] }) => {
   const [isShuffled, setIsShuffled] = useState(false);
   const [editingCard, setEditingCard] = useState<Flashcard | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isCreateOpen, setCreateOpen] = useState(false);
   const [form] = Form.useForm();
+  const [createForm] = Form.useForm();
   const updateFlashcard = useUpdateFlashcard();
+  const createFlashcard = useCreateFlashcard();
   const { message } = App.useApp();
 
   useEffect(() => {
@@ -119,10 +122,20 @@ const BoardView = ({ items }: { items: Flashcard[] }) => {
     setModalOpen(true);
   };
 
+  const handleOpenCreate = () => {
+    createForm.resetFields();
+    setCreateOpen(true);
+  };
+
   const handleModalClose = () => {
     setModalOpen(false);
     setEditingCard(null);
     form.resetFields();
+  };
+
+  const handleCreateClose = () => {
+    setCreateOpen(false);
+    createForm.resetFields();
   };
 
   const handleUpdate = async () => {
@@ -154,9 +167,33 @@ const BoardView = ({ items }: { items: Flashcard[] }) => {
     }
   };
 
+  const handleCreate = async () => {
+    try {
+      const values = await createForm.validateFields();
+      await createFlashcard.mutateAsync({
+        front: values.front,
+        back: values.back,
+      });
+      message.success("Flashcard created");
+      handleCreateClose();
+    } catch (err) {
+      if ((err as any)?.errorFields) {
+        return;
+      }
+      message.error("Failed to create flashcard");
+    }
+  };
+
   return (
     <>
       <div className="mb-4 flex w-full flex-col gap-3 sm:flex-row sm:gap-4">
+        <Button
+          className="w-full sm:w-auto"
+          type="primary"
+          onClick={handleOpenCreate}
+        >
+          Add
+        </Button>
         <Button
           className="w-full sm:w-auto"
           type={isShuffled ? "primary" : "default"}
@@ -177,6 +214,32 @@ const BoardView = ({ items }: { items: Flashcard[] }) => {
           <CardTile key={c.id} card={c} flipAll={flipAll} onEdit={handleEdit} />
         ))}
       </div>
+      <Modal
+        title="Add Flashcard"
+        open={isCreateOpen}
+        confirmLoading={createFlashcard.isPending}
+        okText="Create"
+        onCancel={handleCreateClose}
+        onOk={handleCreate}
+        rootClassName="flashcard-modal"
+      >
+        <Form form={createForm} layout="vertical">
+          <Form.Item
+            name="front"
+            label="Front"
+            rules={[{ required: true, message: "Front is required" }]}
+          >
+            <Input maxLength={100} />
+          </Form.Item>
+          <Form.Item
+            name="back"
+            label="Back"
+            rules={[{ required: true, message: "Back is required" }]}
+          >
+            <Input.TextArea autoSize={{ minRows: 3 }} />
+          </Form.Item>
+        </Form>
+      </Modal>
       <Modal
         title="Edit Flashcard"
         open={isModalOpen}
