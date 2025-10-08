@@ -224,6 +224,7 @@ const CardTile = ({
   }, [flipAll]);
 
   const isFlipped = flipped;
+  const toggleFlip = useCallback(() => setFlipped((s) => !s), []);
   const menuItems: MenuProps["items"] = useMemo(
     () => [
       {
@@ -236,21 +237,21 @@ const CardTile = ({
   const handleMenuClick = useCallback<NonNullable<MenuProps["onClick"]>>(
     ({ key }) => {
       if (key === "edit") {
-        /* This setState is needed because if not, when we click the button, 
+        /* This setState is needed because if not, when we click the button,
           it'll automatically flip the card because it counted as click the card
         */
-        setFlipped((prev) => !prev);
+        toggleFlip();
         onEdit(card);
       }
     },
-    [card, onEdit]
+    [card, onEdit, toggleFlip]
   );
 
   const renderActionButton = () => (
     <Dropdown menu={{ items: menuItems, onClick: handleMenuClick }} trigger={["click"]}>
       <button
         type="button"
-        className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-slate-800/80 text-slate-100 hover:bg-slate-700"
+        className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-slate-800/80 text-slate-100 hover:bg-slate-700 cursor-pointer"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -261,15 +262,28 @@ const CardTile = ({
     </Dropdown>
   );
 
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        toggleFlip();
+      }
+    },
+    [toggleFlip]
+  );
+
   return (
     <div className="relative h-36 sm:h-40 md:h-44 [perspective:1200px]">
-      <button
+      <div
         className={[
           "group relative w-full h-full rounded-2xl",
           "transition-transform duration-500 [transform-style:preserve-3d]",
           isFlipped ? "[transform:rotateX(180deg)]" : "",
         ].join(" ")}
-        onClick={() => setFlipped((s) => !s)}
+        role="button"
+        tabIndex={0}
+        onClick={toggleFlip}
+        onKeyDown={handleKeyDown}
       >
         {/* FRONT */}
         <div
@@ -294,7 +308,7 @@ const CardTile = ({
           {renderActionButton()}
           <span className="px-3 text-center">{card.back}</span>
         </div>
-      </button>
+      </div>
     </div>
   );
 };
