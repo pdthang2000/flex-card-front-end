@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useMemo, useState, useEffect, useCallback } from 'react';
-import {Segmented, Button, Table, Space, Flex} from 'antd';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useListFlashcards } from '@/hooks/useFlashcards';
+import React, { useMemo, useState, useEffect, useCallback } from "react";
+import { Segmented, Button, Table, Space, Flex, Dropdown, Modal, Form, Input, App } from "antd";
+import type { MenuProps } from "antd";
+import { MoreOutlined } from "@ant-design/icons";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useListFlashcards, useUpdateFlashcard } from "@/hooks/useFlashcards";
 
 export type Flashcard = {
   id: string;
@@ -73,13 +75,17 @@ const FlashcardsPage = () => {
   );
 };
 
-// -----------------------------
 // BoardView
 // -----------------------------
 const BoardView = ({ items }: { items: Flashcard[] }) => {
   const [cards, setCards] = useState(items);
   const [flipAll, setFlipAll] = useState(false);
   const [isShuffled, setIsShuffled] = useState(false);
+  const [editingCard, setEditingCard] = useState<Flashcard | null>(null);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [form] = Form.useForm();
+  const updateFlashcard = useUpdateFlashcard();
+  const { message } = App.useApp();
 
   useEffect(() => {
     setCards(items);
@@ -106,15 +112,56 @@ const BoardView = ({ items }: { items: Flashcard[] }) => {
     }
   };
 
+  const handleEdit = (card: Flashcard) => {
+    setEditingCard(card);
+    form.setFieldsValue({ front: card.front, back: card.back });
+    setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setEditingCard(null);
+    form.resetFields();
+  };
+
+  const handleUpdate = async () => {
+    try {
+      const values = await form.validateFields();
+      if (!editingCard) {
+        return;
+      }
+      await updateFlashcard.mutateAsync({
+        id: editingCard.id,
+        front: values.front,
+        back: values.back,
+      });
+      setCards((prev) =>
+        prev.map((card) =>
+          card.id === editingCard.id
+            ? { ...card, front: values.front, back: values.back }
+            : card
+        )
+      );
+      handleModalClose();
+      message.success("Flashcard updated");
+    } catch (err) {
+      // validation errors are handled by the form
+      if ((err as any)?.errorFields) {
+        return;
+      }
+      message.error("Failed to update flashcard");
+    }
+  };
+
   return (
-    <div>
+    <>
       <div className="mb-4 flex w-full flex-col gap-3 sm:flex-row sm:gap-4">
         <Button
           className="w-full sm:w-auto"
           type={isShuffled ? "primary" : "default"}
           onClick={toggleShuffle}
         >
-          {isShuffled ? "Shuffled" : "Shuffle"}
+          {isShuffled ? "Reset Order" : "Shuffle"}
         </Button>
         <Button
           className="w-full sm:w-auto"
@@ -126,10 +173,35 @@ const BoardView = ({ items }: { items: Flashcard[] }) => {
       </div>
       <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
         {cards.map((c) => (
-          <CardTile key={c.id} title={c.front} back={c.back} flipAll={flipAll} />
+          <CardTile key={c.id} card={c} flipAll={flipAll} onEdit={handleEdit} />
         ))}
       </div>
-    </div>
+      <Modal
+        title="Edit Flashcard"
+        open={isModalOpen}
+        confirmLoading={updateFlashcard.isPending}
+        okText="Update"
+        onCancel={handleModalClose}
+        onOk={handleUpdate}
+      >
+        <Form form={form} layout="vertical">
+          <Form.Item
+            name="front"
+            label="Front"
+            rules={[{ required: true, message: "Front is required" }]}
+          >
+            <Input maxLength={100} />
+          </Form.Item>
+          <Form.Item
+            name="back"
+            label="Back"
+            rules={[{ required: true, message: "Back is required" }]}
+          >
+            <Input.TextArea autoSize={{ minRows: 3 }} />
+          </Form.Item>
+        </Form>
+      </Modal>
+    </>
   );
 };
 
@@ -137,19 +209,50 @@ const BoardView = ({ items }: { items: Flashcard[] }) => {
 // CardTile (with vertical flip)
 // -----------------------------
 const CardTile = ({
-                    title,
-                    back,
+                    card,
                     flipAll,
+                    onEdit,
                   }: {
-  title: string;
-  back: string;
+  card: Flashcard;
   flipAll: boolean;
+  onEdit: (card: Flashcard) => void;
 }) => {
   const [flipped, setFlipped] = useState(false);
   const isFlipped = flipAll ? true : flipped;
+  const menuItems: MenuProps["items"] = useMemo(
+    () => [
+      {
+        key: "edit",
+        label: "Edit",
+      },
+    ],
+    []
+  );
 
   return (
     <div className="relative h-36 sm:h-40 md:h-44 [perspective:1200px]">
+      <Dropdown
+        menu={{
+          items: menuItems,
+          onClick: ({ key }) => {
+            if (key === "edit") {
+              onEdit(card);
+            }
+          },
+        }}
+        trigger={["click"]}
+      >
+        <button
+          type="button"
+          className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-slate-800/80 text-slate-100 hover:bg-slate-700"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          <MoreOutlined />
+        </button>
+      </Dropdown>
       <button
         className={[
           "group relative w-full h-full rounded-2xl",
@@ -162,11 +265,11 @@ const CardTile = ({
         <div
           className={[
             "absolute inset-0 rounded-2xl bg-slate-800/80",
-            "flex items-center justify-center text-xl font-semibold tracking-wide text-white",
+            "flex items-center justify-center text-xl font-semibold tracking-wide text-white px-3 text-center",
             "[backface-visibility:hidden]",
           ].join(" ")}
         >
-          {title}
+          {card.front}
         </div>
 
         {/* BACK */}
@@ -177,7 +280,7 @@ const CardTile = ({
             "[transform:rotateX(180deg)] [backface-visibility:hidden]",
           ].join(" ")}
         >
-          {back}
+          {card.back}
         </div>
       </button>
     </div>

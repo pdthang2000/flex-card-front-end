@@ -41,3 +41,14 @@ export function useCreateFlashcard() {
     },
   });
 }
+
+export function useUpdateFlashcard() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ...payload }: { id: string; front: string; back: string; tagIds?: string[] }) =>
+      api.patch(`/flashcard/${id}`, payload).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["flashcards"] });
+    },
+  });
+}
