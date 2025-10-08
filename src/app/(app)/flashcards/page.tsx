@@ -1,20 +1,11 @@
 'use client';
 
 import React, { useMemo, useState, useEffect, useCallback } from "react";
-import { Segmented, Button, Table, Space, Flex, Dropdown, Modal, Form, Input, App } from "antd";
-import type { MenuProps } from "antd";
-import { MoreOutlined } from "@ant-design/icons";
+import { Segmented, Button, Table, Space, Flex, Modal, Form, Input, App } from "antd";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useListFlashcards, useUpdateFlashcard, useCreateFlashcard } from "@/hooks/useFlashcards";
+import { useListFlashcards, useUpdateFlashcard, useCreateFlashcard, Flashcard as FlashcardType } from "@/hooks/useFlashcards";
 import "./flashcards.css";
-
-export type Flashcard = {
-  id: string;
-  front: string;
-  back: string;
-  tagIds?: string[];
-  createdAt?: string;
-};
+import Flashcard from "./Flashcard";
 
 const FlashcardsPage = () => {
   const sp = useSearchParams();
@@ -78,11 +69,11 @@ const FlashcardsPage = () => {
 
 // BoardView
 // -----------------------------
-const BoardView = ({ items }: { items: Flashcard[] }) => {
+const BoardView = ({ items }: { items: FlashcardType[] }) => {
   const [cards, setCards] = useState(items);
   const [flipAll, setFlipAll] = useState(false);
   const [isShuffled, setIsShuffled] = useState(false);
-  const [editingCard, setEditingCard] = useState<Flashcard | null>(null);
+  const [editingCard, setEditingCard] = useState<FlashcardType | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const [isCreateOpen, setCreateOpen] = useState(false);
   const [form] = Form.useForm();
@@ -116,7 +107,7 @@ const BoardView = ({ items }: { items: Flashcard[] }) => {
     }
   };
 
-  const handleEdit = (card: Flashcard) => {
+  const handleEdit = (card: FlashcardType) => {
     setEditingCard(card);
     form.setFieldsValue({ front: card.front, back: card.back });
     setModalOpen(true);
@@ -211,7 +202,7 @@ const BoardView = ({ items }: { items: Flashcard[] }) => {
       </div>
       <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
         {cards.map((c) => (
-          <CardTile key={c.id} card={c} flipAll={flipAll} onEdit={handleEdit} />
+          <Flashcard key={c.id} card={c} flipAll={flipAll} onEdit={handleEdit} />
         ))}
       </div>
       <Modal
@@ -271,117 +262,9 @@ const BoardView = ({ items }: { items: Flashcard[] }) => {
 };
 
 // -----------------------------
-// CardTile (with vertical flip)
-// -----------------------------
-const CardTile = ({
-                    card,
-                    flipAll,
-                    onEdit,
-                  }: {
-  card: Flashcard;
-  flipAll: boolean;
-  onEdit: (card: Flashcard) => void;
-}) => {
-  const [flipped, setFlipped] = useState(false);
-
-  useEffect(() => {
-    setFlipped(flipAll);
-  }, [flipAll]);
-
-  const isFlipped = flipped;
-  const toggleFlip = useCallback(() => setFlipped((s) => !s), []);
-  const menuItems: MenuProps["items"] = useMemo(
-    () => [
-      {
-        key: "edit",
-        label: "Edit",
-      },
-    ],
-    []
-  );
-  const handleMenuClick = useCallback<NonNullable<MenuProps["onClick"]>>(
-    ({ key }) => {
-      if (key === "edit") {
-        /* This setState is needed because if not, when we click the button,
-          it'll automatically flip the card because it counted as click the card
-        */
-        toggleFlip();
-        onEdit(card);
-      }
-    },
-    [card, onEdit, toggleFlip]
-  );
-
-  const renderActionButton = () => (
-    <Dropdown menu={{ items: menuItems, onClick: handleMenuClick }} trigger={["click"]}>
-      <button
-        type="button"
-        className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-slate-800/80 text-slate-100 hover:bg-slate-700 cursor-pointer"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        }}
-      >
-        <MoreOutlined />
-      </button>
-    </Dropdown>
-  );
-
-  const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent<HTMLDivElement>) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        toggleFlip();
-      }
-    },
-    [toggleFlip]
-  );
-
-  return (
-    <div className="relative h-36 sm:h-40 md:h-44 [perspective:1200px]">
-      <div
-        className={[
-          "group relative w-full h-full rounded-2xl",
-          "transition-transform duration-500 [transform-style:preserve-3d]",
-          isFlipped ? "[transform:rotateX(180deg)]" : "",
-        ].join(" ")}
-        role="button"
-        tabIndex={0}
-        onClick={toggleFlip}
-        onKeyDown={handleKeyDown}
-      >
-        {/* FRONT */}
-        <div
-          className={[
-            "absolute inset-0 rounded-2xl bg-slate-800/80",
-            "flex items-center justify-center text-xl font-semibold tracking-wide text-white",
-            "[backface-visibility:hidden]",
-          ].join(" ")}
-        >
-          {renderActionButton()}
-          <span className="px-3 text-center">{card.front}</span>
-        </div>
-
-        {/* BACK */}
-        <div
-          className={[
-            "absolute inset-0 rounded-2xl bg-slate-700/70",
-            "flex items-center justify-center text-base font-medium text-slate-200",
-            "[transform:rotateX(180deg)] [backface-visibility:hidden]",
-          ].join(" ")}
-        >
-          {renderActionButton()}
-          <span className="px-3 text-center">{card.back}</span>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// -----------------------------
 // SimpleTable
 // -----------------------------
-const SimpleTable = ({ items }: { items: Flashcard[] }) => {
+const SimpleTable = ({ items }: { items: FlashcardType[] }) => {
   const columns = useMemo(
     () => [
       { title: "Front", dataIndex: "front", key: "front" },
