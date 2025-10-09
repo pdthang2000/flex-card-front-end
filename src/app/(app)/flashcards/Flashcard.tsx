@@ -83,7 +83,11 @@ const Flashcard = ({ card, flipAll, onEdit }: FlashcardProps) => {
           ].join(" ")}
         >
           {renderActionButton()}
-          <p className="block w-full px-3 text-center break-all whitespace-pre-wrap">{card.front}</p>
+          <div className="flex h-full w-full items-center justify-center px-6 py-4">
+            <p className="flashcard-scroll max-h-full w-full overflow-y-auto pr-2 text-center break-all whitespace-pre-wrap">
+              {card.front}
+            </p>
+          </div>
         </div>
 
         {/* BACK */}
@@ -95,7 +99,11 @@ const Flashcard = ({ card, flipAll, onEdit }: FlashcardProps) => {
           ].join(" ")}
         >
           {renderActionButton()}
-          <p className="block w-full px-3 text-center break-all whitespace-pre-wrap">{card.back}</p>
+          <div className="flex h-full w-full items-center justify-center px-6 py-4">
+            <p className="flashcard-scroll max-h-full w-full overflow-y-auto pr-2 text-center break-all whitespace-pre-wrap">
+              {card.back}
+            </p>
+          </div>
         </div>
       </div>
     </div>
