@@ -78,12 +78,12 @@ const Flashcard = ({ card, flipAll, onEdit }: FlashcardProps) => {
         <div
           className={[
             "absolute inset-0 rounded-2xl bg-slate-800/80",
-            "flex items-center justify-center text-xl font-semibold tracking-wide text-white",
+            "flex items-center justify-center text-base font-semibold tracking-wide text-white",
             "[backface-visibility:hidden]",
           ].join(" ")}
         >
           {renderActionButton()}
-          <span className="px-3 text-center">{card.front}</span>
+          <p className="block w-full px-3 text-center break-all whitespace-pre-wrap">{card.front}</p>
         </div>
 
         {/* BACK */}
@@ -95,7 +95,7 @@ const Flashcard = ({ card, flipAll, onEdit }: FlashcardProps) => {
           ].join(" ")}
         >
           {renderActionButton()}
-          <span className="px-3 text-center">{card.back}</span>
+          <p className="block w-full px-3 text-center break-all whitespace-pre-wrap">{card.back}</p>
         </div>
       </div>
     </div>
