@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { Segmented, Button, Table, Space, Flex, Modal, Form, Input, App } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useListFlashcards, useUpdateFlashcard, useCreateFlashcard, Flashcard as FlashcardType } from "@/hooks/useFlashcards";
 import "./flashcards.css";
@@ -265,20 +266,53 @@ const BoardView = ({ items }: { items: FlashcardType[] }) => {
 // SimpleTable
 // -----------------------------
 const SimpleTable = ({ items }: { items: FlashcardType[] }) => {
-  const columns = useMemo(
-    () => [
-      { title: "Front", dataIndex: "front", key: "front" },
-      { title: "Back", dataIndex: "back", key: "back" },
-    ],
+  const renderCell = useCallback(
+    (value: string) => (
+      <span className="flashcards-table-text" title={value}>
+        {value}
+      </span>
+    ),
     []
+  );
+
+  const columns = useMemo<ColumnsType<FlashcardType>>(
+    () => [
+      {
+        title: "Id",
+        dataIndex: "id",
+        key: "id",
+        width: "10%",
+        render: renderCell,
+        onCell: () => ({ className: "flashcards-table-cell" }),
+      },
+      {
+        title: "Front",
+        dataIndex: "front",
+        key: "front",
+        width: "45%",
+        render: renderCell,
+        onCell: () => ({ className: "flashcards-table-cell" }),
+      },
+      {
+        title: "Back",
+        dataIndex: "back",
+        key: "back",
+        width: "45%",
+        render: renderCell,
+        onCell: () => ({ className: "flashcards-table-cell" }),
+      },
+    ],
+    [renderCell]
   );
 
   return (
     <Table
+      className="flashcards-table"
       rowKey={(r) => r.id}
       dataSource={items}
-      columns={columns as any}
+      columns={columns}
       pagination={false}
+      tableLayout="fixed"
     />
   );
 };
