@@ -5,7 +5,7 @@ import { Segmented, Button, Table, Space, Flex, Modal, Form, Input, App } from "
 import type { ColumnsType } from "antd/es/table";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useListFlashcards, useUpdateFlashcard, useCreateFlashcard, useDeleteFlashcard, Flashcard as FlashcardType } from "@/hooks/useFlashcards";
-import "./flashcards.css";
+import "./flashcards.scss";
 import Flashcard from "./Flashcard";
 
 const FlashcardsPage = () => {

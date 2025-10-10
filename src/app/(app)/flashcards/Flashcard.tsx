@@ -80,7 +80,7 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete }: FlashcardProps) => {
         {/* FRONT */}
         <div
           className={[
-            "absolute inset-0 rounded-2xl bg-slate-800/80",
+            "absolute inset-0 rounded-2xl bg-sub-main",
             "flex items-center justify-center text-base font-semibold tracking-wide text-white",
             "[backface-visibility:hidden]",
           ].join(" ")}

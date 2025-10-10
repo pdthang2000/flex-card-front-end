@@ -1,0 +1,23 @@
+@use "../scss/shared" as *;
+@import 'antd/dist/reset.css';
+@import "tailwindcss";
+
+/* Tailwind base/components/utilities remain below */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+$main: #0f172a;
+$subMain: #1A2539;
+
+.color-main {
+  color: $main !important;
+}
+
+.bg-main {
+  background-color: $main !important;
+}
+
+.bg-sub-main {
+  background-color: $subMain !important;
+}

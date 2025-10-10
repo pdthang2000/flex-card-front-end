@@ -1,5 +1,7 @@
+@use "../../../scss/shared" as *;
+
 .flashcard-modal .ant-modal-content {
-  background-color: #0f172a;
+  background-color: $main;
   color: #e2e8f0;
   border: 1px solid rgba(148, 163, 184, 0.25);
   box-shadow: 0 20px 40px rgba(15, 23, 42, 0.6);
