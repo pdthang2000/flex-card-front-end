@@ -52,3 +52,14 @@ export function useUpdateFlashcard() {
     },
   });
 }
+
+export function useDeleteFlashcard() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id }: { id: string }) =>
+      api.delete(`/flashcard/${id}`).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["flashcards"] });
+    },
+  });
+}

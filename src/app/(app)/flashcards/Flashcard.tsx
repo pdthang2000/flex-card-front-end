@@ -5,19 +5,18 @@ import { MoreOutlined } from "@ant-design/icons";
 import type { Flashcard as FlashcardType } from "@/hooks/useFlashcards";
 
 const MENU_ITEMS: MenuProps["items"] = [
-  {
-    key: "edit",
-    label: "Edit",
-  },
+  { key: "edit", label: "Edit" },
+  { key: "delete", label: "Delete", danger: true },
 ];
 
 type FlashcardProps = {
   card: FlashcardType;
   flipAll: boolean;
   onEdit: (card: FlashcardType) => void;
+  onDelete: (card: FlashcardType) => void;
 };
 
-const Flashcard = ({ card, flipAll, onEdit }: FlashcardProps) => {
+const Flashcard = ({ card, flipAll, onEdit, onDelete }: FlashcardProps) => {
   const [flipped, setFlipped] = useState(false);
 
   useEffect(() => {
@@ -31,9 +30,13 @@ const Flashcard = ({ card, flipAll, onEdit }: FlashcardProps) => {
       if (key === "edit") {
         toggleFlip();
         onEdit(card);
+        return;
+      }
+      if (key === "delete") {
+        onDelete(card);
       }
     },
-    [card, onEdit, toggleFlip]
+    [card, onDelete, onEdit, toggleFlip]
   );
 
   const renderActionButton = () => (

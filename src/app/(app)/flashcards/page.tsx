@@ -4,7 +4,7 @@ import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { Segmented, Button, Table, Space, Flex, Modal, Form, Input, App } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useListFlashcards, useUpdateFlashcard, useCreateFlashcard, Flashcard as FlashcardType } from "@/hooks/useFlashcards";
+import { useListFlashcards, useUpdateFlashcard, useCreateFlashcard, useDeleteFlashcard, Flashcard as FlashcardType } from "@/hooks/useFlashcards";
 import "./flashcards.css";
 import Flashcard from "./Flashcard";
 
@@ -81,7 +81,8 @@ const BoardView = ({ items }: { items: FlashcardType[] }) => {
   const [createForm] = Form.useForm();
   const updateFlashcard = useUpdateFlashcard();
   const createFlashcard = useCreateFlashcard();
-  const { message } = App.useApp();
+  const deleteFlashcard = useDeleteFlashcard();
+  const { message, modal } = App.useApp();
 
   useEffect(() => {
     setCards(items);
@@ -176,6 +177,28 @@ const BoardView = ({ items }: { items: FlashcardType[] }) => {
     }
   };
 
+  const handleDelete = (card: FlashcardType) => {
+    modal.confirm({
+      title: "Delete flashcard?",
+      content: "This action cannot be undone.",
+      okText: "Delete",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        try {
+          await deleteFlashcard.mutateAsync({ id: card.id });
+          setCards((prev) => prev.filter((c) => c.id !== card.id));
+          if (editingCard?.id === card.id) {
+            handleModalClose();
+          }
+          message.success("Flashcard deleted");
+        } catch (err) {
+          message.error("Failed to delete flashcard");
+          throw err;
+        }
+      },
+    });
+  };
+
   return (
     <>
       <div className="mb-4 flex w-full flex-col gap-3 sm:flex-row sm:gap-4">
@@ -203,7 +226,7 @@ const BoardView = ({ items }: { items: FlashcardType[] }) => {
       </div>
       <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
         {cards.map((c) => (
-          <Flashcard key={c.id} card={c} flipAll={flipAll} onEdit={handleEdit} />
+          <Flashcard key={c.id} card={c} flipAll={flipAll} onEdit={handleEdit} onDelete={handleDelete} />
         ))}
       </div>
       <Modal
