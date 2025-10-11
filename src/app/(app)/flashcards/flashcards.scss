@@ -22,18 +22,18 @@
 .flashcard-modal .ant-btn-primary {
   background-color: #22d3ee;
   border-color: #22d3ee;
-  color: #0f172a;
+  color: $main;
 }
 
 .flashcard-modal .ant-btn-default {
   border-color: rgba(148, 163, 184, 0.4);
-  color: #0f172a;
+  color: $main;
   background-color: #e2e8f0;
 }
 
 .flashcard-modal .ant-btn-default:hover {
   border-color: rgba(148, 163, 184, 0.7);
-  color: #0f172a;
+  color: $main;
   background-color: #f1f5f9;
 }
 

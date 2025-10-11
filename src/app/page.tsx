@@ -13,7 +13,6 @@ export default function HomePage() {
   const [tagId] = useState<string | undefined>(undefined); // wire later
 
   const { data, isFetching, isError } = useListFlashcards({ tagId, page, size });
-  console.log('data: ', data);
   const create = useCreateFlashcard();
 
   const items = data?.data?.items ?? [];

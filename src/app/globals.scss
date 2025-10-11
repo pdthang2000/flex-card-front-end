@@ -1,6 +1,5 @@
 @use "../scss/shared" as *;
-@import 'antd/dist/reset.css';
-@import "tailwindcss";
+@use "tailwindcss";
 
 /* Tailwind base/components/utilities remain below */
 @tailwind base;
