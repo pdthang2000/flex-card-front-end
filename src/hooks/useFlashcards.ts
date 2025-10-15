@@ -6,7 +6,7 @@ export type Flashcard = {
   id: string;
   front: string;
   back: string;
-  tagIds: string[];
+  tags: any[];
   createdAt: string;
 };
 
@@ -20,12 +20,12 @@ export type PaginatedResult<T> = {
   items: T[];
 };
 
-export function useListFlashcards(params: { tagId?: string; page: number; size: number }) {
-  const { tagId, page, size } = params;
+export function useListFlashcards(params: { tagNames?: string; page: number; size: number }) {
+  const { tagNames, page, size } = params;
   return useQuery({
-    queryKey: qk.flashcards({ tagId, page, size }),
+    queryKey: qk.flashcards({ tagNames, page, size }),
     queryFn: () =>
-      get<FlashcardResponse>("/flashcard", { tagId, page, size }),
+      get<FlashcardResponse>("/flashcard", { tagNames, page, size }),
     placeholderData: (prev) => prev, // keepPreviousData
   });
 }
@@ -33,7 +33,7 @@ export function useListFlashcards(params: { tagId?: string; page: number; size: 
 export function useCreateFlashcard() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (payload: { front: string; back: string; tagIds?: string[] }) =>
+    mutationFn: (payload: { front: string; back: string; tagNames?: string[] }) =>
       api.post("/flashcard", payload).then((r) => r.data),
     onSuccess: () => {
       // Invalidate first page of many lists. Simple & effective.
@@ -45,7 +45,7 @@ export function useCreateFlashcard() {
 export function useUpdateFlashcard() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, ...payload }: { id: string; front: string; back: string; tagIds?: string[] }) =>
+    mutationFn: ({ id, ...payload }: { id: string; front: string; back: string; tagNames?: string[] }) =>
       api.patch(`/flashcard/${id}`, payload).then((r) => r.data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["flashcards"] });

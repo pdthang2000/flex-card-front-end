@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { Segmented, Button, Table, Space, Flex, Modal, Form, Input, App } from "antd";
+import { SearchOutlined, ClearOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useListFlashcards, useUpdateFlashcard, useCreateFlashcard, useDeleteFlashcard, Flashcard as FlashcardType } from "@/hooks/useFlashcards";
@@ -15,25 +16,44 @@ const FlashcardsPage = () => {
   const page = Number(sp.get("page") ?? 1);
   const size = Number(sp.get("size") ?? 20);
   const layout = (sp.get("layout") ?? "board") as "board" | "table";
+  const tagNames = sp.get("tagNames") || undefined;
 
-  const { data, isError } = useListFlashcards({ page, size });
+  const { data, isError } = useListFlashcards({ tagNames, page, size });
   const items = data?.data?.items ?? [];
 
-  const toggleLayout = () => {
-    const next = layout === "board" ? "table" : "board";
+  const updateUrl = (updates: { layout?: string; page?: number; size?: number; tagNames?: string }) => {
     const qs = new URLSearchParams(sp.toString());
-    qs.set("layout", next);
-    qs.set("page", String(page));
-    qs.set("size", String(size));
+    if (updates.layout !== undefined) qs.set("layout", updates.layout);
+    if (updates.page !== undefined) qs.set("page", String(updates.page));
+    if (updates.size !== undefined) qs.set("size", String(updates.size));
+    if (updates.tagNames !== undefined) {
+      if (updates.tagNames) {
+        qs.set("tagNames", updates.tagNames);
+      } else {
+        qs.delete("tagNames");
+      }
+    } else {
+      qs.delete("tagNames");
+    }
     router.push(`/flashcards?${qs.toString()}`);
   };
 
+  const toggleLayout = () => {
+    const next = layout === "board" ? "table" : "board";
+    updateUrl({ layout: next, page, size });
+  };
+
   const setLayout = (next: "board" | "table") => {
-    const qs = new URLSearchParams(sp.toString());
-    qs.set("layout", next);
-    qs.set("page", String(page));
-    qs.set("size", String(size));
-    router.push(`/flashcards?${qs.toString()}`);
+    updateUrl({ layout: next, page, size });
+  };
+
+  const handleSearch = (value: string) => {
+    const trimmedValue = value.trim();
+    updateUrl({ tagNames: trimmedValue || undefined, page: 1 });
+  };
+
+  const handleClearSearch = () => {
+    updateUrl({ tagNames: undefined, page: 1 });
   };
 
   return (
@@ -54,6 +74,27 @@ const FlashcardsPage = () => {
           />
         </Space>
       </Flex>
+
+      {/* Search Bar */}
+      <div className="mb-6">
+        <Space.Compact style={{ width: '100%', maxWidth: 400 }}>
+          <Input
+            placeholder="Search by tag ID..."
+            value={tagNames ?? ""}
+            onChange={(e) => handleSearch(e.target.value)}
+            prefix={<SearchOutlined />}
+            allowClear
+            onClear={handleClearSearch}
+          />
+          {tagNames && (
+            <Button 
+              icon={<ClearOutlined />} 
+              onClick={handleClearSearch}
+              title="Clear search"
+            />
+          )}
+        </Space.Compact>
+      </div>
 
       {layout === "board" ? (
         <BoardView items={items} />
