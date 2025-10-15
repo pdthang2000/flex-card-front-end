@@ -1,3 +1,6 @@
+import type { Flashcard } from "@/entities/Flashcard";
+import type { Tag } from "@/entities/Tag";
+
 export type ApiStatus = "SUCCESS" | "FAILED";
 
 export type PaginatedResult<T> = {
@@ -5,18 +8,8 @@ export type PaginatedResult<T> = {
   items: T[];
 };
 
-export type Tag = {
-  id: string;
-  name: string;
-};
-
-export type Flashcard = {
-  id: string;
-  front: string;
-  back: string;
-  tags: Tag[];
-  createdAt: string;
-};
+export type { Flashcard } from "@/entities/Flashcard";
+export type { Tag } from "@/entities/Tag";
 
 export type FlashcardListResponse = {
   data: PaginatedResult<Flashcard>;
