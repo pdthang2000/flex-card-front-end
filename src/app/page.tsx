@@ -38,7 +38,8 @@ export default function HomePage() {
 
   const handleSearch = (value: string) => {
     setSearchValue(value);
-    setTagNames(value.trim() || undefined);
+    const trimmed = value.trim();
+    setTagNames(trimmed || undefined);
     setPage(1); // Reset to first page when searching
   };
 

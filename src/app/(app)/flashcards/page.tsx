@@ -18,11 +18,21 @@ const FlashcardsPage = () => {
   const page = Number(sp.get("page") ?? 1);
   const size = Number(sp.get("size") ?? 20);
   const layout = (sp.get("layout") ?? "board") as "board" | "table";
-  const tagNames = sp.get("tagNames") || undefined;
+  const tagNamesParam = sp.get("tagNames") ?? "";
+  const selectedTagNames = useMemo(
+    () =>
+      tagNamesParam
+        .split(",")
+        .map((name) => name.trim())
+        .filter(Boolean),
+    [tagNamesParam]
+  );
 
   const [tagSearch, setTagSearch] = useState("");
 
-  const { data, isError } = useListFlashcards({ tagNames, page, size });
+  const joinedTagNames = selectedTagNames.length ? selectedTagNames.join(",") : undefined;
+
+  const { data, isError } = useListFlashcards({ tagNames: joinedTagNames, page, size });
 
   const { data: tagResponse, isFetching: isTagsFetching } = useListTags({
     page: 1,
@@ -37,11 +47,13 @@ const FlashcardsPage = () => {
       label: tag.name,
       value: tag.name,
     }));
-    if (tagNames && !options.some((option) => option.value === tagNames)) {
-      options.push({ label: tagNames, value: tagNames });
-    }
+    selectedTagNames.forEach((name) => {
+      if (!options.some((option) => option.value === name)) {
+        options.push({ label: name, value: name });
+      }
+    });
     return options;
-  }, [tagResponse, tagNames]);
+  }, [tagResponse, selectedTagNames]);
 
   const updateUrl = (updates: { layout?: string; page?: number; size?: number; tagNames?: string }) => {
     const qs = new URLSearchParams(sp.toString());
@@ -54,8 +66,6 @@ const FlashcardsPage = () => {
       } else {
         qs.delete("tagNames");
       }
-    } else {
-      qs.delete("tagNames");
     }
     router.push(`/flashcards?${qs.toString()}`);
   };
@@ -71,16 +81,16 @@ const FlashcardsPage = () => {
 
   const handleClearSearch = () => {
     setTagSearch("");
-    updateUrl({ tagNames: undefined, page: 1 });
+    updateUrl({ tagNames: "", page: 1 });
   };
 
-  const handleTagChange = (value?: string) => {
-    if (!value) {
+  const handleTagChange = (values: string[]) => {
+    if (!values.length) {
       handleClearSearch();
       return;
     }
     setTagSearch("");
-    updateUrl({ tagNames: value, page: 1 });
+    updateUrl({ tagNames: values.join(","), page: 1 });
   };
 
   const handleTagSearch = (value: string) => {
@@ -110,19 +120,21 @@ const FlashcardsPage = () => {
       <div className="mb-6">
         <Space.Compact style={{ width: '100%', maxWidth: 400 }}>
           <Select<string>
+            mode="multiple"
             showSearch
             placeholder="Filter by tag name..."
-            value={tagNames ?? undefined}
+            values={selectedTagNames}
             options={tagOptions}
             onChange={handleTagChange}
             onSearch={handleTagSearch}
             allowClear
+            onClear={handleClearSearch}
             filterOption={false}
             loading={isTagsFetching}
             notFoundContent={isTagsFetching ? "Loading..." : "No tags found"}
             style={{ width: "100%" }}
           />
-          {tagNames && (
+          {selectedTagNames.length > 0 && (
             <Button 
               icon={<ClearOutlined />} 
               onClick={handleClearSearch}
