@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Dropdown } from "antd";
 import type { MenuProps } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
-import type { Flashcard as FlashcardType } from "@/hooks/useFlashcards";
+import type { Flashcard as FlashcardType } from "@/types";
 
 const MENU_ITEMS: MenuProps["items"] = [
   { key: "edit", label: "Edit" },

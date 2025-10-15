@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Table, Pagination, Form, Input, Button, Flex, App, Space } from "antd";
 import { SearchOutlined, ClearOutlined } from "@ant-design/icons";
-import { useListFlashcards, useCreateFlashcard, Flashcard } from "@/hooks/useFlashcards";
+import { useListFlashcards, useCreateFlashcard } from "@/hooks/useFlashcards";
+import type { Flashcard } from "@/types";
 
 const DEFAULT_SIZE = 20;
 

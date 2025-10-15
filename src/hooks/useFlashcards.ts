@@ -1,31 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { get, api } from "@/lib/api";
 import { qk } from "@/lib/queryKeys";
-
-export type Flashcard = {
-  id: string;
-  front: string;
-  back: string;
-  tags: any[];
-  createdAt: string;
-};
-
-export type FlashcardResponse = {
-  data: PaginatedResult<Flashcard>;
-  status: 'SUCCESS' | 'FAILED';
-}
-
-export type PaginatedResult<T> = {
-  pagination: { page: number; size: number; total: number };
-  items: T[];
-};
+import type { FlashcardListResponse } from "@/types";
 
 export function useListFlashcards(params: { tagNames?: string; page: number; size: number }) {
   const { tagNames, page, size } = params;
   return useQuery({
     queryKey: qk.flashcards({ tagNames, page, size }),
     queryFn: () =>
-      get<FlashcardResponse>("/flashcard", { tagNames, page, size }),
+      get<FlashcardListResponse>("/flashcard", { tagNames, page, size }),
     placeholderData: (prev) => prev, // keepPreviousData
   });
 }

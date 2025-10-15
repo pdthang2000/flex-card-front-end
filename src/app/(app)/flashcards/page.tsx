@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useMemo, useState, useEffect, useCallback } from "react";
-import { Segmented, Button, Table, Space, Flex, Modal, Form, Input, App } from "antd";
-import { SearchOutlined, ClearOutlined } from "@ant-design/icons";
+import { Segmented, Button, Table, Space, Flex, Modal, Form, Input, App, Select } from "antd";
+import { ClearOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useListFlashcards, useUpdateFlashcard, useCreateFlashcard, useDeleteFlashcard, Flashcard as FlashcardType } from "@/hooks/useFlashcards";
+import { useListFlashcards, useUpdateFlashcard, useCreateFlashcard, useDeleteFlashcard } from "@/hooks/useFlashcards";
+import { useListTags } from "@/hooks/useTags";
+import type { Flashcard as FlashcardType } from "@/types";
 import "./flashcards.scss";
 import Flashcard from "./Flashcard";
 
@@ -18,8 +20,28 @@ const FlashcardsPage = () => {
   const layout = (sp.get("layout") ?? "board") as "board" | "table";
   const tagNames = sp.get("tagNames") || undefined;
 
+  const [tagSearch, setTagSearch] = useState("");
+
   const { data, isError } = useListFlashcards({ tagNames, page, size });
+
+  const { data: tagResponse, isFetching: isTagsFetching } = useListTags({
+    page: 1,
+    size: 50,
+    name: tagSearch || undefined,
+  });
   const items = data?.data?.items ?? [];
+
+  const tagOptions = useMemo(() => {
+    const raw = tagResponse?.data?.items ?? [];
+    const options = raw.map((tag) => ({
+      label: tag.name,
+      value: tag.name,
+    }));
+    if (tagNames && !options.some((option) => option.value === tagNames)) {
+      options.push({ label: tagNames, value: tagNames });
+    }
+    return options;
+  }, [tagResponse, tagNames]);
 
   const updateUrl = (updates: { layout?: string; page?: number; size?: number; tagNames?: string }) => {
     const qs = new URLSearchParams(sp.toString());
@@ -47,13 +69,22 @@ const FlashcardsPage = () => {
     updateUrl({ layout: next, page, size });
   };
 
-  const handleSearch = (value: string) => {
-    const trimmedValue = value.trim();
-    updateUrl({ tagNames: trimmedValue || undefined, page: 1 });
+  const handleClearSearch = () => {
+    setTagSearch("");
+    updateUrl({ tagNames: undefined, page: 1 });
   };
 
-  const handleClearSearch = () => {
-    updateUrl({ tagNames: undefined, page: 1 });
+  const handleTagChange = (value?: string) => {
+    if (!value) {
+      handleClearSearch();
+      return;
+    }
+    setTagSearch("");
+    updateUrl({ tagNames: value, page: 1 });
+  };
+
+  const handleTagSearch = (value: string) => {
+    setTagSearch(value.trim());
   };
 
   return (
@@ -75,22 +106,27 @@ const FlashcardsPage = () => {
         </Space>
       </Flex>
 
-      {/* Search Bar */}
+      {/* Tag Filter */}
       <div className="mb-6">
         <Space.Compact style={{ width: '100%', maxWidth: 400 }}>
-          <Input
-            placeholder="Search by tag ID..."
-            value={tagNames ?? ""}
-            onChange={(e) => handleSearch(e.target.value)}
-            prefix={<SearchOutlined />}
+          <Select<string>
+            showSearch
+            placeholder="Filter by tag name..."
+            value={tagNames ?? undefined}
+            options={tagOptions}
+            onChange={handleTagChange}
+            onSearch={handleTagSearch}
             allowClear
-            onClear={handleClearSearch}
+            filterOption={false}
+            loading={isTagsFetching}
+            notFoundContent={isTagsFetching ? "Loading..." : "No tags found"}
+            style={{ width: "100%" }}
           />
           {tagNames && (
             <Button 
               icon={<ClearOutlined />} 
               onClick={handleClearSearch}
-              title="Clear search"
+              title="Clear filter"
             />
           )}
         </Space.Compact>
