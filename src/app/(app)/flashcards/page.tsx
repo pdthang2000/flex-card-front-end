@@ -7,7 +7,7 @@ import type { ColumnsType } from "antd/es/table";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useListFlashcards, useUpdateFlashcard, useCreateFlashcard, useDeleteFlashcard } from "@/hooks/useFlashcards";
 import { useListTags } from "@/hooks/useTags";
-import type { Flashcard as FlashcardType } from "@/types";
+import type { Flashcard as FlashcardType, Tag } from "@/types";
 import "./flashcards.scss";
 import Flashcard from "./Flashcard";
 
@@ -172,6 +172,33 @@ const BoardView = ({ items }: { items: FlashcardType[] }) => {
   const createFlashcard = useCreateFlashcard();
   const deleteFlashcard = useDeleteFlashcard();
   const { message, modal } = App.useApp();
+  const {
+    data: tagResponse,
+    isFetching: isTagsFetching,
+  } = useListTags({ page: 1, size: 100 });
+
+  const availableTags = useMemo(
+    () => tagResponse?.data?.items ?? [],
+    [tagResponse]
+  );
+
+  const tagOptions = useMemo(() => {
+    const knownNames = new Set<string>();
+    const base = availableTags.map((tag) => {
+      knownNames.add(tag.name);
+      return { label: tag.name, value: tag.name };
+    });
+
+    if (editingCard?._tags?.length) {
+      editingCard._tags.forEach((tag) => {
+        if (!knownNames.has(tag.name)) {
+          base.push({ label: tag.name, value: tag.name });
+        }
+      });
+    }
+
+    return base;
+  }, [availableTags, editingCard]);
 
   useEffect(() => {
     setCards(items);
@@ -200,7 +227,11 @@ const BoardView = ({ items }: { items: FlashcardType[] }) => {
 
   const handleEdit = (card: FlashcardType) => {
     setEditingCard(card);
-    form.setFieldsValue({ front: card.front, back: card.back });
+    form.setFieldsValue({
+      front: card.front,
+      back: card.back,
+      tagNames: card._tags?.map((tag) => tag.name) ?? [],
+    });
     setModalOpen(true);
   };
 
@@ -226,17 +257,38 @@ const BoardView = ({ items }: { items: FlashcardType[] }) => {
       if (!editingCard) {
         return;
       }
+      const { front, back, tagNames } = values as {
+        front: string;
+        back: string;
+        tagNames?: string[];
+      };
       await updateFlashcard.mutateAsync({
         id: editingCard.id,
-        front: values.front,
-        back: values.back,
+        front,
+        back,
+        tagNames,
       });
+      // Ensure the board and modal reflect tag changes immediately instead of waiting for the refetch.
+      // We build a quick lookup using any tags we already know about (query results + the card itself),
+      // so the UI can reuse full Tag objects when possible and still fall back to a minimal stub if
+      // the server doesn't return the tag in the latest query response.
+      const tagLookup = new Map<string, Tag>();
+      availableTags.forEach((tag) => tagLookup.set(tag.name, tag));
+      editingCard._tags?.forEach((tag) => {
+        if (!tagLookup.has(tag.name)) {
+          tagLookup.set(tag.name, tag);
+        }
+      });
+      const nextTags = (tagNames ?? []).map((name) => tagLookup.get(name) ?? { id: name, name });
       setCards((prev) =>
         prev.map((card) =>
           card.id === editingCard.id
-            ? { ...card, front: values.front, back: values.back }
+            ? { ...card, front, back, _tags: nextTags }
             : card
         )
+      );
+      setEditingCard((prev) =>
+        prev ? { ...prev, front, back, _tags: nextTags } : prev
       );
       handleModalClose();
       message.success("Flashcard updated");
@@ -367,6 +419,17 @@ const BoardView = ({ items }: { items: FlashcardType[] }) => {
             rules={[{ required: true, message: "Back is required" }]}
           >
             <Input.TextArea autoSize={{ minRows: 3 }} />
+          </Form.Item>
+          <Form.Item name="tagNames" label="Tags">
+            <Select
+              mode="multiple"
+              placeholder="Select tags"
+              options={tagOptions}
+              loading={isTagsFetching}
+              allowClear
+              showSearch
+              optionFilterProp="label"
+            />
           </Form.Item>
         </Form>
       </Modal>
