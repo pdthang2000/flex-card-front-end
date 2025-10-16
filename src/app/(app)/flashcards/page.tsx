@@ -304,9 +304,15 @@ const BoardView = ({ items }: { items: FlashcardType[] }) => {
   const handleCreate = async () => {
     try {
       const values = await createForm.validateFields();
+      const { front, back, tagNames } = values as {
+        front: string;
+        back: string;
+        tagNames?: string[];
+      };
       await createFlashcard.mutateAsync({
-        front: values.front,
-        back: values.back,
+        front,
+        back,
+        tagNames,
       });
       message.success("Flashcard created");
       handleCreateClose();
@@ -393,6 +399,17 @@ const BoardView = ({ items }: { items: FlashcardType[] }) => {
             rules={[{ required: true, message: "Back is required" }]}
           >
             <Input.TextArea autoSize={{ minRows: 3 }} />
+          </Form.Item>
+          <Form.Item name="tagNames" label="Tags">
+            <Select
+              mode="multiple"
+              placeholder="Select tags"
+              options={tagOptions}
+              loading={isTagsFetching}
+              allowClear
+              showSearch
+              optionFilterProp="label"
+            />
           </Form.Item>
         </Form>
       </Modal>
