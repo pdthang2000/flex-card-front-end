@@ -1,5 +1,54 @@
 @use "../../../scss/shared" as *;
 
+.flashcard-ribbon {
+  position: absolute;
+  top: 5px;
+  left: -40px;
+  width: 120px;
+  padding: 6px 0;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-align: center;
+  background-color: rgba(15, 23, 42, 0.85);
+  color: #e0f2fe;
+  pointer-events: none;
+  z-index: 20;
+  transform: rotate(-45deg);
+  transform-origin: center;
+  // box-shadow: 0 6px 12px rgba(15, 23, 42, 0.4);
+}
+
+.flashcard-ribbon::before,
+.flashcard-ribbon::after {
+  content: "";
+  position: absolute;
+  top: calc(100% - 1px);
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+}
+
+.flashcard-ribbon::before {
+  left: 0;
+  border-top-color: rgba(15, 23, 42, 0.6);
+}
+
+.flashcard-ribbon::after {
+  right: 0;
+  border-top-color: rgba(15, 23, 42, 0.6);
+}
+
+.flashcard-ribbon--back {
+  background-color: rgba(30, 41, 59, 0.8);
+  color: #bae6fd;
+}
+
+.flashcard-ribbon--back::before,
+.flashcard-ribbon--back::after {
+  border-top-color: rgba(30, 41, 59, 0.6);
+}
+
 .flashcard-modal .ant-modal-content {
   background-color: $main;
   color: #e2e8f0;

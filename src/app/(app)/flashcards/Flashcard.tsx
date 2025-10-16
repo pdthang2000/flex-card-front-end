@@ -120,9 +120,11 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete }: FlashcardProps) => {
             className={[
               "absolute inset-0 rounded-2xl bg-sub-main",
               "flex items-center justify-center text-base font-semibold tracking-wide text-white",
+              "overflow-hidden",
               "[backface-visibility:hidden]",
             ].join(" ")}
           >
+            <span className="flashcard-ribbon flashcard-ribbon--front">Front</span>
             {renderActionButton()}
             <div className="flex h-full w-full items-center justify-center px-6 py-4">
               <p className="flashcard-scroll max-h-full w-full overflow-y-auto pr-2 text-center break-all whitespace-pre-wrap">
@@ -136,9 +138,11 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete }: FlashcardProps) => {
             className={[
               "absolute inset-0 rounded-2xl bg-slate-700/70",
               "flex items-center justify-center text-base font-medium text-slate-200",
+              "overflow-hidden",
               "[transform:rotateX(180deg)] [backface-visibility:hidden]",
             ].join(" ")}
           >
+            <span className="flashcard-ribbon flashcard-ribbon--back">Back</span>
             {renderActionButton()}
             <div className="flex h-full w-full items-center justify-center px-6 py-4">
               <p className="flashcard-scroll max-h-full w-full overflow-y-auto pr-2 text-center break-all whitespace-pre-wrap">
