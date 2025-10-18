@@ -82,7 +82,7 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete }: FlashcardProps) => {
           </span>
         ),
         children: tags.length ? (
-          <div className="flex flex-wrap gap-2">
+          <div className="flashcard-tags-scroll flashcard-scroll flex flex-wrap gap-2 pr-1">
             {tags.map((tag: Tag) => (
               <span
                 key={tag.id ?? tag.name}

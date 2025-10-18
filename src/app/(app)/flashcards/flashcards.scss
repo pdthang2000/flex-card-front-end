@@ -132,6 +132,11 @@
   border-radius: 9999px;
 }
 
+.flashcard-tags-scroll {
+  max-height: 5.5rem;
+  overflow-y: auto;
+}
+
 .flashcards-table .ant-table {
   background: transparent;
   color: #e2e8f0;
