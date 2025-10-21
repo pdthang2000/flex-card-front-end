@@ -35,7 +35,7 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete }: FlashcardProps) => {
   const handleMenuClick = useCallback<NonNullable<MenuProps["onClick"]>>(
     ({ key }) => {
       if (key === "edit") {
-        toggleFlip();
+        setFlipped(false);
         onEdit(card);
         return;
       }
@@ -43,7 +43,7 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete }: FlashcardProps) => {
         onDelete(card);
       }
     },
-    [card, onDelete, onEdit, toggleFlip]
+    [card, onDelete, onEdit]
   );
 
   const renderActionButton = () => (
