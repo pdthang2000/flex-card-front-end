@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo, useState, useEffect, useCallback } from "react";
-import { Segmented, Button, Table, Space, Flex, Modal, Form, Input, App, Select } from "antd";
+import { Segmented, Button, Table, Space, Flex, Modal, Form, Input, App, Select, Pagination } from "antd";
 import { ClearOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -40,6 +40,10 @@ const FlashcardsPage = () => {
     name: tagSearch || undefined,
   });
   const items = data?.data?.items ?? [];
+  const pagination = data?.data?.pagination;
+  const total = pagination?.total ?? 0;
+  const currentPage = pagination?.page ?? page;
+  const pageSize = pagination?.size ?? size;
 
   const tagOptions = useMemo(() => {
     const raw = tagResponse?.data?.items ?? [];
@@ -97,6 +101,10 @@ const FlashcardsPage = () => {
     setTagSearch(value.trim());
   };
 
+  const handlePageChange = (nextPage: number, nextSize?: number) => {
+    updateUrl({ page: nextPage, size: nextSize ?? pageSize });
+  };
+
   return (
     <div className="min-h-screen bg-slate-900 text-white p-6 ">
       <Flex justify="space-between" align="center" className="mb-6">
@@ -145,7 +153,13 @@ const FlashcardsPage = () => {
       </div>
 
       {layout === "board" ? (
-        <BoardView items={items} />
+        <BoardView
+          items={items}
+          page={currentPage}
+          size={pageSize}
+          total={total}
+          onPageChange={handlePageChange}
+        />
       ) : (
         <SimpleTable items={items} />
       )}
@@ -159,7 +173,15 @@ const FlashcardsPage = () => {
 
 // BoardView
 // -----------------------------
-const BoardView = ({ items }: { items: FlashcardType[] }) => {
+type BoardViewProps = {
+  items: FlashcardType[];
+  page: number;
+  size: number;
+  total: number;
+  onPageChange: (page: number, size: number) => void;
+};
+
+const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) => {
   const [cards, setCards] = useState(items);
   const [flipAll, setFlipAll] = useState(false);
   const [isShuffled, setIsShuffled] = useState(false);
@@ -348,28 +370,19 @@ const BoardView = ({ items }: { items: FlashcardType[] }) => {
 
   return (
     <>
-      <div className="mb-4 flex w-full flex-col gap-3 sm:flex-row sm:gap-4">
-        <Button
-          className="w-full sm:w-auto"
-          type="primary"
-          onClick={handleOpenCreate}
-        >
+      <div className="mb-4 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+        <Button className="w-full sm:w-auto" type="primary" onClick={handleOpenCreate}>
           Add
         </Button>
-        <Button
-          className="w-full sm:w-auto"
-          type={isShuffled ? "primary" : "default"}
-          onClick={toggleShuffle}
-        >
+        <Button className="w-full sm:w-auto" type={isShuffled ? "primary" : "default"} onClick={toggleShuffle}>
           {isShuffled ? "Shuffled" : "Shuffle"}
         </Button>
-        <Button
-          className="w-full sm:w-auto"
-          type={flipAll ? "primary" : "default"}
-          onClick={() => setFlipAll((s) => !s)}
-        >
-          {flipAll ? "Unflip All" : "Flip All"}
-        </Button>
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
+          <Button className="w-full sm:w-auto" type={flipAll ? "primary" : "default"} onClick={() => setFlipAll((s) => !s)}>
+            {flipAll ? "Unflip All" : "Flip All"}
+          </Button>
+          <FlashcardsPagination page={page} size={size} total={total} onChange={onPageChange} />
+        </div>
       </div>
       <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
         {cards.map((c) => (
@@ -510,3 +523,25 @@ const SimpleTable = ({ items }: { items: FlashcardType[] }) => {
 };
 
 export default FlashcardsPage;
+
+type FlashcardsPaginationProps = {
+  page: number;
+  size: number;
+  total: number;
+  onChange: (page: number, size: number) => void;
+};
+
+const FlashcardsPagination = ({ page, size, total, onChange }: FlashcardsPaginationProps) => (
+  <Pagination
+    className="flashcard-pagination"
+    current={page}
+    total={total}
+    pageSize={size}
+    showSizeChanger
+    showLessItems
+    responsive
+    onChange={(nextPage, nextSize) => onChange(nextPage, nextSize ?? size)}
+    onShowSizeChange={(_, nextSize) => onChange(1, nextSize)}
+    pageSizeOptions={["10", "20", "30", "50"]}
+  />
+);
