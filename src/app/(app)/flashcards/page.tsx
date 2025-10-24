@@ -374,17 +374,25 @@ const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) =
   return (
     <>
       <div className="flashcard-actions mb-4 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
-        <Button className="flashcard-action-btn w-full sm:w-auto" type="primary" onClick={handleOpenCreate}>
-          Add
-        </Button>
-        <Button className="flashcard-action-btn w-full sm:w-auto" type={isShuffled ? "primary" : "default"} onClick={toggleShuffle}>
-          {isShuffled ? "Shuffled" : "Shuffle"}
-        </Button>
         <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
+          <Button className="flashcard-action-btn w-full sm:w-auto" type="primary" onClick={handleOpenCreate}>
+            Add
+          </Button>
+          <Button className="flashcard-action-btn w-full sm:w-auto" type={isShuffled ? "primary" : "default"} onClick={toggleShuffle}>
+            {isShuffled ? "Shuffled" : "Shuffle"}
+          </Button>
           <Button className="flashcard-action-btn w-full sm:w-auto" type={flipAll ? "primary" : "default"} onClick={() => setFlipAll((s) => !s)}>
             {flipAll ? "Unflip All" : "Flip All"}
           </Button>
-          <FlashcardsPagination page={page} size={size} total={total} onChange={onPageChange} />
+        </div>
+        <div className="flex w-full sm:flex-1 sm:justify-end">
+          <FlashcardsPagination
+            page={page}
+            size={size}
+            total={total}
+            onChange={onPageChange}
+            containerClassName="w-full sm:w-auto sm:flex-none"
+          />
         </div>
       </div>
       <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
@@ -532,19 +540,25 @@ type FlashcardsPaginationProps = {
   size: number;
   total: number;
   onChange: (page: number, size: number) => void;
+  containerClassName?: string;
 };
 
-const FlashcardsPagination = ({ page, size, total, onChange }: FlashcardsPaginationProps) => (
-  <Pagination
-    className="flashcard-pagination"
-    current={page}
-    total={total}
-    pageSize={size}
-    showSizeChanger
-    showLessItems
-    responsive
-    onChange={(nextPage, nextSize) => onChange(nextPage, nextSize ?? size)}
-    onShowSizeChange={(_, nextSize) => onChange(1, nextSize)}
-    pageSizeOptions={["10", "20", "30", "50"]}
-  />
-);
+const FlashcardsPagination = ({ page, size, total, onChange, containerClassName }: FlashcardsPaginationProps) => {
+  const containerClasses = ["flex justify-end", containerClassName ?? "w-full"].join(" ");
+  return (
+    <div className={containerClasses}>
+      <Pagination
+        className="flashcard-pagination"
+        current={page}
+        total={total}
+        pageSize={size}
+        showSizeChanger
+        showLessItems
+        responsive
+        onChange={(nextPage, nextSize) => onChange(nextPage, nextSize ?? size)}
+        onShowSizeChange={(_, nextSize) => onChange(1, nextSize)}
+        pageSizeOptions={["10", "20", "30", "50"]}
+      />
+    </div>
+  );
+};
