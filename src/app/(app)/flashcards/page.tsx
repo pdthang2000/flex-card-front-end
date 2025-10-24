@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo, useState, useEffect, useCallback } from "react";
-import { Segmented, Button, Table, Space, Flex, Modal, Form, Input, App, Select, Pagination } from "antd";
+import { Segmented, Button, Table, Space, Flex, Modal, Form, Input, App, Select, Pagination, Spin } from "antd";
 import { ClearOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -32,7 +32,8 @@ const FlashcardsPage = () => {
 
   const joinedTagNames = selectedTagNames.length ? selectedTagNames.join(",") : undefined;
 
-  const { data, isError } = useListFlashcards({ tagNames: joinedTagNames, page, size });
+  const { data, isError, isFetching, isLoading } = useListFlashcards({ tagNames: joinedTagNames, page, size });
+  const isLoadingFlashcards = isLoading || isFetching;
 
   const { data: tagResponse, isFetching: isTagsFetching } = useListTags({
     page: 1,
@@ -152,17 +153,19 @@ const FlashcardsPage = () => {
         </Space.Compact>
       </div>
 
-      {layout === "board" ? (
-        <BoardView
-          items={items}
-          page={currentPage}
-          size={pageSize}
-          total={total}
-          onPageChange={handlePageChange}
-        />
-      ) : (
-        <SimpleTable items={items} />
-      )}
+      <Spin spinning={isLoadingFlashcards} tip="Loading flashcards..." className="w-full">
+        {layout === "board" ? (
+          <BoardView
+            items={items}
+            page={currentPage}
+            size={pageSize}
+            total={total}
+            onPageChange={handlePageChange}
+          />
+        ) : (
+          <SimpleTable items={items} />
+        )}
+      </Spin>
 
       {isError && (
         <div className="text-red-400 mt-4">Failed to load flashcards.</div>
@@ -370,15 +373,15 @@ const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) =
 
   return (
     <>
-      <div className="mb-4 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
-        <Button className="w-full sm:w-auto" type="primary" onClick={handleOpenCreate}>
+      <div className="flashcard-actions mb-4 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+        <Button className="flashcard-action-btn w-full sm:w-auto" type="primary" onClick={handleOpenCreate}>
           Add
         </Button>
-        <Button className="w-full sm:w-auto" type={isShuffled ? "primary" : "default"} onClick={toggleShuffle}>
+        <Button className="flashcard-action-btn w-full sm:w-auto" type={isShuffled ? "primary" : "default"} onClick={toggleShuffle}>
           {isShuffled ? "Shuffled" : "Shuffle"}
         </Button>
         <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
-          <Button className="w-full sm:w-auto" type={flipAll ? "primary" : "default"} onClick={() => setFlipAll((s) => !s)}>
+          <Button className="flashcard-action-btn w-full sm:w-auto" type={flipAll ? "primary" : "default"} onClick={() => setFlipAll((s) => !s)}>
             {flipAll ? "Unflip All" : "Flip All"}
           </Button>
           <FlashcardsPagination page={page} size={size} total={total} onChange={onPageChange} />

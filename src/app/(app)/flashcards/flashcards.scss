@@ -185,3 +185,89 @@
   word-break: break-word;
   white-space: normal;
 }
+
+.flashcard-pagination {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .ant-pagination-item {
+    background: transparent;
+    border-color: rgba(148, 163, 184, 0.35);
+
+    a {
+      color: #f1f5f9;
+    }
+
+    &:hover {
+      background: transparent;
+
+      a {
+        color: #0ea5e9;
+      }
+    }
+  }
+
+  .ant-pagination-item-active {
+    background: transparent;
+    border-color: #0ea5e9;
+
+    a {
+      color: #0ea5e9;
+    }
+  }
+
+  .ant-pagination-prev,
+  .ant-pagination-next {
+    .ant-pagination-item-link {
+      color: #f1f5f9;
+      border-color: rgba(148, 163, 184, 0.35);
+      background: transparent;
+
+      &:hover {
+        color: #0ea5e9;
+      }
+    }
+  }
+
+  .ant-pagination-options {
+    .ant-select-selector {
+      background-color: rgba(15, 23, 42, 0.85);
+      border-color: rgba(148, 163, 184, 0.35);
+      color: #f1f5f9;
+    }
+  }
+}
+
+.flashcard-actions {
+  .flashcard-action-btn {
+    background: rgba(15, 23, 42, 0.85);
+    border-color: rgba(148, 163, 184, 0.35);
+    color: #f1f5f9;
+    transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+
+    &:hover,
+    &:focus {
+      background: rgba(15, 23, 42, 0.85);
+      color: #0ea5e9;
+      border-color: #0ea5e9;
+    }
+
+    &:active {
+      background: rgba(14, 165, 233, 0.16);
+    }
+
+    &.ant-btn-primary {
+      background: rgba(14, 165, 233, 0.16);
+      border-color: #0ea5e9;
+      color: #0ea5e9;
+
+      &:hover,
+      &:focus {
+        background: rgba(14, 165, 233, 0.16);
+        color: #22d3ee;
+        border-color: #22d3ee;
+      }
+    }
+  }
+}
