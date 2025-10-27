@@ -18,7 +18,7 @@ type FlashcardProps = {
 };
 
 const Flashcard = ({ card, flipAll, onEdit, onDelete, variant = "default" }: FlashcardProps) => {
-  const [flipped, setFlipped] = useState(false);
+  const [flipped, setFlipped] = useState(flipAll);
 
   const tags = useMemo(() => {
     if (Array.isArray(card._tags) && card._tags.length) {
@@ -105,7 +105,7 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete, variant = "default" }: Fla
         ),
       },
     ],
-    [tags, variant, caretSize]
+    [tags, variant]
   );
 
   return (

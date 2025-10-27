@@ -253,6 +253,9 @@ const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) =
       setCards(shuffleItems());
       setIsShuffled(true);
     }
+    if (isPracticeMode) {
+      setPracticeIndex(0);
+    }
   };
 
   useEffect(() => {
@@ -428,7 +431,6 @@ const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) =
             className="flashcard-action-btn w-full sm:w-auto"
             type={isShuffled ? "primary" : "default"}
             onClick={toggleShuffle}
-            disabled={isPracticeMode}
           >
             {isShuffled ? "Shuffled" : "Shuffle"}
           </Button>
@@ -436,7 +438,6 @@ const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) =
             className="flashcard-action-btn w-full sm:w-auto"
             type={flipAll ? "primary" : "default"}
             onClick={() => setFlipAll((s) => !s)}
-            disabled={isPracticeMode}
           >
             {flipAll ? "Unflip All" : "Flip All"}
           </Button>
