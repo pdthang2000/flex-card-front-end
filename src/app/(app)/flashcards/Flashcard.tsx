@@ -77,21 +77,12 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete, variant = "default" }: Fla
     [toggleFlip]
   );
 
+  const caretSize = useMemo(() => (variant === "large" ? 20 : 16), [variant]);
+
   const collapseItems = useMemo(
     () => [
       {
         key: "tags",
-        label: (
-          <span
-            className={[
-              "flex items-center gap-2 text-slate-200",
-              variant === "large" ? "text-lg" : "",
-            ].join(" ")}
-          >
-            <TagFilled className="text-white" />
-            Tags{tags.length ? ` (${tags.length})` : ""}
-          </span>
-        ),
         children: tags.length ? (
           <div className="flashcard-tags-scroll flashcard-scroll flex flex-wrap gap-2 pr-1">
             {tags.map((tag: Tag) => (
@@ -209,12 +200,24 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete, variant = "default" }: Fla
       <Collapse
         items={collapseItems}
         ghost
-        className="flashcard-tags-collapse"
         expandIcon={({ isActive }) => (
-          <CaretRightOutlined
-            rotate={isActive ? 90 : 0}
-            style={{ color: "#fff", fontSize: 12 }}
-          />
+          <>
+            <CaretRightOutlined
+              rotate={isActive ? 90 : 0}
+              style={{color: "#fff", fontSize: caretSize, paddingRight: "0.5rem"}}
+            />
+            <TagFilled
+              style={{color: "#fff", fontSize: caretSize, paddingRight: "0.25rem"}}
+            />
+            <span
+              className={[
+                "flex items-center gap-2 text-slate-200",
+                variant === "large" ? "text-lg" : "",
+              ].join(" ")}
+            >
+            Tags{tags.length ? ` (${tags.length})` : ""}
+          </span>
+          </>
         )}
       />
     </div>
