@@ -35,8 +35,8 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete, variant = "default" }: Fla
 
   const handleMenuClick = useCallback<NonNullable<MenuProps["onClick"]>>(
     ({ key }) => {
+      setFlipped((prev) => !prev);
       if (key === "edit") {
-        setFlipped(false);
         onEdit(card);
         return;
       }
@@ -208,7 +208,6 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete, variant = "default" }: Fla
 
       <Collapse
         items={collapseItems}
-        size={variant === "large" ? "default" : "small"}
         ghost
         className="flashcard-tags-collapse"
         expandIcon={({ isActive }) => (
