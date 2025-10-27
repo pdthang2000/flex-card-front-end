@@ -475,26 +475,26 @@ const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) =
                   variant="large"
                 />
               </div>
-              {cardsCount > 1 && (
-                <div className="flashcard-practice-nav flex items-center gap-6">
-                  <Button
-                    className="flashcard-practice-nav__control flashcard-practice-nav__control--prev"
-                    size="large"
-                    type="primary"
-                    icon={<LeftOutlined />}
-                    onClick={showPreviousPracticeCard}
-                    aria-label="Previous card"
-                  />
-                  <Button
-                    className="flashcard-practice-nav__control flashcard-practice-nav__control--next"
-                    type="primary"
-                    size="large"
-                    icon={<RightOutlined />}
-                    onClick={showNextPracticeCard}
-                    aria-label="Next card"
-                  />
-                </div>
-              )}
+              <div className="flashcard-practice-nav flex items-center gap-6">
+                <Button
+                  className="flashcard-practice-nav__control flashcard-practice-nav__control--prev"
+                  size="large"
+                  icon={<LeftOutlined />}
+                  onClick={showPreviousPracticeCard}
+                  aria-label="Previous card"
+                />
+                <span className="flashcard-practice-nav__counter">
+                  {cardsCount ? `${practiceIndex + 1}/${cardsCount}` : "0/0"}
+                </span>
+                <Button
+                  className="flashcard-practice-nav__control flashcard-practice-nav__control--next"
+                  type="primary"
+                  size="large"
+                  icon={<RightOutlined />}
+                  onClick={showNextPracticeCard}
+                  aria-label="Next card"
+                />
+              </div>
             </>
           ) : (
             <div className="flex h-64 w-full items-center justify-center rounded-2xl border border-dashed border-slate-600 text-slate-300">
