@@ -26,7 +26,7 @@ export function useCreateFlashcard() {
 }
 
 export function useUpdateFlashcard() {
-  const qc = useQueryClient();
+  // const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, ...payload }: { id: string; front: string; back: string; tagNames?: string[] }) =>
       api.patch(`/flashcard/${id}`, payload).then((r) => r.data),
