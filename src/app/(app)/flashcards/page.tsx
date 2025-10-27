@@ -229,12 +229,41 @@ const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) =
 
   const cardsCount = cards.length;
 
+  const activePracticeCard = cards[practiceIndex] ?? null;
+  const activePracticeCardId = activePracticeCard?.id;
+
   useEffect(() => {
     setCards(items);
-    setFlipAll(false);
-    setIsShuffled(false);
-    setPracticeIndex(0);
-  }, [items]);
+
+    if (!items.length) {
+      setPracticeIndex(0);
+      setFlipAll(false);
+      setIsShuffled(false);
+      if (isPracticeMode) {
+        setPracticeMode(false);
+      }
+      return;
+    }
+
+    if (isPracticeMode) {
+      if (activePracticeCardId) {
+        const nextIndex = items.findIndex((card) => card.id === activePracticeCardId);
+        if (nextIndex >= 0) {
+          setPracticeIndex(nextIndex);
+          return;
+        }
+      }
+      // Keep the current practice position when possible; otherwise clamp to the last available card.
+      setPracticeIndex((prev) => {
+        const fallback = Math.min(prev, items.length - 1);
+        return fallback >= 0 ? fallback : 0;
+      });
+    } else {
+      setPracticeIndex(0);
+      setFlipAll(false);
+      setIsShuffled(false);
+    }
+  }, [items, isPracticeMode, activePracticeCardId]);
 
   const shuffleItems = useCallback(() => {
     const shuffled = [...items];
@@ -267,8 +296,6 @@ const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) =
       setPracticeIndex(0);
     }
   }, [cards, isPracticeMode, practiceIndex]);
-
-  const activePracticeCard = cards[practiceIndex] ?? null;
 
   const handlePracticeToggle = () => {
     if (!cards.length) {
@@ -482,6 +509,7 @@ const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) =
                   icon={<LeftOutlined />}
                   onClick={showPreviousPracticeCard}
                   aria-label="Previous card"
+                  disabled={cardsCount <= 1}
                 />
                 <span className="flashcard-practice-nav__counter">
                   {cardsCount ? `${practiceIndex + 1}/${cardsCount}` : "0/0"}
@@ -493,6 +521,7 @@ const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) =
                   icon={<RightOutlined />}
                   onClick={showNextPracticeCard}
                   aria-label="Next card"
+                  disabled={cardsCount <= 1}
                 />
               </div>
             </>

@@ -31,7 +31,7 @@ export function useUpdateFlashcard() {
     mutationFn: ({ id, ...payload }: { id: string; front: string; back: string; tagNames?: string[] }) =>
       api.patch(`/flashcard/${id}`, payload).then((r) => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["flashcards"] });
+      // qc.invalidateQueries({ queryKey: ["flashcards"] });
     },
   });
 }
