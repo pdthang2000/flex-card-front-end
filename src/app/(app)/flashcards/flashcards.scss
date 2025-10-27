@@ -239,6 +239,63 @@
   }
 }
 
+.flashcard-practice-nav {
+  .flashcard-practice-nav__control {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 9999px;
+    padding: 0;
+    background: $subMain;
+    border-color: lighten($subMain, 6%);
+    color: #e2e8f0;
+    font-size: 1.4rem;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+
+    .ant-btn-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: inherit;
+      margin: 0;
+    }
+
+    &:hover,
+    &:focus-visible {
+      background: lighten($subMain, 4%);
+      border-color: lighten($subMain, 14%);
+      color: #22d3ee;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+      background: darken($subMain, 2%);
+      border-color: lighten($subMain, 4%);
+    }
+
+    &.ant-btn-primary {
+      background: lighten($subMain, 8%);
+      border-color: lighten($subMain, 18%);
+      color: #38e8ff;
+
+      &:hover,
+      &:focus-visible {
+        background: lighten($subMain, 12%);
+        border-color: lighten($subMain, 26%);
+        color: #8bf4ff;
+      }
+
+      &:active {
+        background: lighten($subMain, 4%);
+        border-color: lighten($subMain, 16%);
+      }
+    }
+  }
+}
+
 .flashcard-actions {
   .flashcard-action-btn {
     background: rgba(15, 23, 42, 0.85);

@@ -475,15 +475,19 @@ const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) =
                 />
               </div>
               {cardsCount > 1 && (
-                <div className="flashcard-practice-nav flex items-center gap-4">
+                <div className="flashcard-practice-nav flex items-center gap-6">
                   <Button
-                    shape="circle"
+                    className="flashcard-practice-nav__control flashcard-practice-nav__control--prev"
+                    size="large"
+                    type="primary"
                     icon={<LeftOutlined />}
                     onClick={showPreviousPracticeCard}
                     aria-label="Previous card"
                   />
                   <Button
-                    shape="circle"
+                    className="flashcard-practice-nav__control flashcard-practice-nav__control--next"
+                    type="primary"
+                    size="large"
                     icon={<RightOutlined />}
                     onClick={showNextPracticeCard}
                     aria-label="Next card"
