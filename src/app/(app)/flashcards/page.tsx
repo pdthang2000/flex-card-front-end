@@ -191,6 +191,8 @@ const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) =
   const [editingCard, setEditingCard] = useState<FlashcardType | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const [isCreateOpen, setCreateOpen] = useState(false);
+  const [isPracticeMode, setPracticeMode] = useState(false);
+  const [practiceIndex, setPracticeIndex] = useState(0);
   const [form] = Form.useForm();
   const [createForm] = Form.useForm();
   const updateFlashcard = useUpdateFlashcard();
@@ -225,10 +227,13 @@ const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) =
     return base;
   }, [availableTags, editingCard]);
 
+  const cardsCount = cards.length;
+
   useEffect(() => {
     setCards(items);
     setFlipAll(false);
     setIsShuffled(false);
+    setPracticeIndex(0);
   }, [items]);
 
   const shuffleItems = useCallback(() => {
@@ -250,9 +255,46 @@ const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) =
     }
   };
 
-  const handlePractice = () => {
-    message.info("Practice mode coming soon");
+  useEffect(() => {
+    if (!cards.length && isPracticeMode) {
+      setPracticeMode(false);
+      return;
+    }
+    if (isPracticeMode && practiceIndex >= cards.length) {
+      setPracticeIndex(0);
+    }
+  }, [cards, isPracticeMode, practiceIndex]);
+
+  const activePracticeCard = cards[practiceIndex] ?? null;
+
+  const handlePracticeToggle = () => {
+    if (!cards.length) {
+      message.info("No flashcards available to practice.");
+      return;
+    }
+    setPracticeMode((prev) => {
+      const next = !prev;
+      if (next) {
+        setFlipAll(false);
+        setPracticeIndex(0);
+      }
+      return next;
+    });
   };
+
+  const showPreviousPracticeCard = useCallback(() => {
+    if (!cardsCount) {
+      return;
+    }
+    setPracticeIndex((prev) => (prev - 1 + cardsCount) % cardsCount);
+  }, [cardsCount]);
+
+  const showNextPracticeCard = useCallback(() => {
+    if (!cardsCount) {
+      return;
+    }
+    setPracticeIndex((prev) => (prev + 1) % cardsCount);
+  }, [cardsCount]);
 
   const handleEdit = (card: FlashcardType) => {
     setEditingCard(card);
@@ -382,31 +424,80 @@ const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) =
           <Button className="flashcard-action-btn w-full sm:w-auto" type="primary" onClick={handleOpenCreate}>
             Add
           </Button>
-          <Button className="flashcard-action-btn w-full sm:w-auto" type={isShuffled ? "primary" : "default"} onClick={toggleShuffle}>
+          <Button
+            className="flashcard-action-btn w-full sm:w-auto"
+            type={isShuffled ? "primary" : "default"}
+            onClick={toggleShuffle}
+            disabled={isPracticeMode}
+          >
             {isShuffled ? "Shuffled" : "Shuffle"}
           </Button>
-          <Button className="flashcard-action-btn w-full sm:w-auto" type={flipAll ? "primary" : "default"} onClick={() => setFlipAll((s) => !s)}>
+          <Button
+            className="flashcard-action-btn w-full sm:w-auto"
+            type={flipAll ? "primary" : "default"}
+            onClick={() => setFlipAll((s) => !s)}
+            disabled={isPracticeMode}
+          >
             {flipAll ? "Unflip All" : "Flip All"}
           </Button>
-          <Button className="flashcard-action-btn w-full sm:w-auto" onClick={handlePractice}>
-            Practice
+          <Button
+            className="flashcard-action-btn w-full sm:w-auto"
+            type={isPracticeMode ? "primary" : "default"}
+            onClick={handlePracticeToggle}
+          >
+            {isPracticeMode ? "Exit Practice" : "Practice"}
           </Button>
         </div>
-        <div className="flex w-full sm:flex-1 sm:justify-end">
-          <FlashcardsPagination
-            page={page}
-            size={size}
-            total={total}
-            onChange={onPageChange}
-            containerClassName="w-full sm:w-auto sm:flex-none"
-          />
+        {!isPracticeMode && (
+          <div className="flex w-full sm:flex-1 sm:justify-end">
+            <FlashcardsPagination
+              page={page}
+              size={size}
+              total={total}
+              onChange={onPageChange}
+              containerClassName="w-full sm:w-auto sm:flex-none"
+            />
+          </div>
+        )}
+      </div>
+      {isPracticeMode ? (
+        <div className="flex w-full flex-1 flex-col items-center gap-6">
+          {activePracticeCard ? (
+            <>
+              <div className="w-full">
+                <Flashcard
+                  key={activePracticeCard.id}
+                  card={activePracticeCard}
+                  flipAll={flipAll}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  variant="large"
+                />
+              </div>
+              {cardsCount > 1 && (
+                <Space size="middle" wrap>
+                  <Button className="flashcard-action-btn" onClick={showPreviousPracticeCard}>
+                    Previous
+                  </Button>
+                  <Button className="flashcard-action-btn" type="primary" onClick={showNextPracticeCard}>
+                    Next
+                  </Button>
+                </Space>
+              )}
+            </>
+          ) : (
+            <div className="flex h-64 w-full items-center justify-center rounded-2xl border border-dashed border-slate-600 text-slate-300">
+              No flashcards available.
+            </div>
+          )}
         </div>
-      </div>
-      <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
-        {cards.map((c) => (
-          <Flashcard key={c.id} card={c} flipAll={flipAll} onEdit={handleEdit} onDelete={handleDelete} />
-        ))}
-      </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
+          {cards.map((c) => (
+            <Flashcard key={c.id} card={c} flipAll={flipAll} onEdit={handleEdit} onDelete={handleDelete} />
+          ))}
+        </div>
+      )}
       <Modal
         title="Add Flashcard"
         open={isCreateOpen}

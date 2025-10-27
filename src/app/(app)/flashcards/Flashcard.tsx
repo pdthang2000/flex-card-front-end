@@ -14,9 +14,10 @@ type FlashcardProps = {
   flipAll: boolean;
   onEdit: (card: FlashcardType) => void;
   onDelete: (card: FlashcardType) => void;
+  variant?: "default" | "large";
 };
 
-const Flashcard = ({ card, flipAll, onEdit, onDelete }: FlashcardProps) => {
+const Flashcard = ({ card, flipAll, onEdit, onDelete, variant = "default" }: FlashcardProps) => {
   const [flipped, setFlipped] = useState(false);
 
   const tags = useMemo(() => {
@@ -50,7 +51,12 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete }: FlashcardProps) => {
     <Dropdown menu={{ items: MENU_ITEMS, onClick: handleMenuClick }} trigger={["click"]}>
       <button
         type="button"
-        className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-slate-800/80 text-slate-100 hover:bg-slate-700 cursor-pointer"
+        className={[
+          "absolute z-10 flex items-center justify-center rounded-full bg-slate-800/80 text-slate-100 hover:bg-slate-700 cursor-pointer",
+          variant === "large"
+            ? "right-4 top-4 h-12 w-12 text-lg"
+            : "right-2 top-2 h-8 w-8 text-base",
+        ].join(" ")}
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -76,7 +82,12 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete }: FlashcardProps) => {
       {
         key: "tags",
         label: (
-          <span className="flex items-center gap-2 text-slate-200">
+          <span
+            className={[
+              "flex items-center gap-2 text-slate-200",
+              variant === "large" ? "text-lg" : "",
+            ].join(" ")}
+          >
             <TagFilled className="text-white" />
             Tags{tags.length ? ` (${tags.length})` : ""}
           </span>
@@ -86,7 +97,10 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete }: FlashcardProps) => {
             {tags.map((tag: Tag) => (
               <span
                 key={tag.id ?? tag.name}
-                className="inline-flex items-center gap-2 rounded-full bg-slate-800/80 px-3 py-1 text-xs text-slate-100"
+                className={[
+                  "inline-flex items-center gap-2 rounded-full bg-slate-800/80 px-3 py-1 text-slate-100",
+                  variant === "large" ? "text-base" : "text-xs",
+                ].join(" ")}
               >
                 <TagFilled className="text-white" />
                 {tag.name}
@@ -94,19 +108,34 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete }: FlashcardProps) => {
             ))}
           </div>
         ) : (
-          <span className="text-xs text-slate-400">No tags assigned</span>
+          <span className={variant === "large" ? "text-base text-slate-400" : "text-xs text-slate-400"}>
+            No tags assigned
+          </span>
         ),
       },
     ],
-    [tags]
+    [tags, variant]
   );
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="relative h-36 sm:h-40 md:h-44 [perspective:1200px]">
+    <div
+      className={[
+        "flex flex-col gap-3",
+        variant === "large" ? "w-full h-full gap-6" : "",
+      ].join(" ")}
+    >
+      <div
+        className={[
+          "relative [perspective:1200px]",
+          variant === "large"
+            ? "h-[calc(100vh-10rem)] min-h-[420px] w-full sm:h-[calc(100vh-8rem)]"
+            : "h-36 sm:h-40 md:h-44",
+        ].join(" ")}
+      >
         <div
           className={[
-            "group relative w-full h-full rounded-2xl",
+            "group relative w-full h-full",
+            variant === "large" ? "rounded-3xl" : "rounded-2xl",
             "transition-transform duration-500 [transform-style:preserve-3d]",
             flipped ? "[transform:rotateX(180deg)]" : "",
           ].join(" ")}
@@ -118,16 +147,28 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete }: FlashcardProps) => {
           {/* FRONT */}
           <div
             className={[
-              "absolute inset-0 rounded-2xl bg-sub-main",
-              "flex items-center justify-center text-base font-semibold tracking-wide text-white",
+              "absolute inset-0 bg-sub-main",
+              variant === "large" ? "rounded-3xl" : "rounded-2xl",
+              "flex items-center justify-center font-semibold tracking-wide text-white",
+              variant === "large" ? "text-2xl md:text-3xl" : "text-base",
               "overflow-hidden",
               "[backface-visibility:hidden]",
             ].join(" ")}
           >
             <span className="flashcard-ribbon flashcard-ribbon--front">Front</span>
             {renderActionButton()}
-            <div className="flex h-full w-full items-center justify-center px-6 py-4">
-              <p className="flashcard-scroll max-h-full w-full overflow-y-auto pr-2 text-center break-all whitespace-pre-wrap">
+            <div
+              className={[
+                "flex h-full w-full items-center justify-center",
+                variant === "large" ? "px-10 py-12" : "px-6 py-4",
+              ].join(" ")}
+            >
+              <p
+                className={[
+                  "flashcard-scroll max-h-full w-full overflow-y-auto pr-2 text-center break-all whitespace-pre-wrap",
+                  variant === "large" ? "text-2xl leading-relaxed" : "",
+                ].join(" ")}
+              >
                 {card.front}
               </p>
             </div>
@@ -136,16 +177,28 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete }: FlashcardProps) => {
           {/* BACK */}
           <div
             className={[
-              "absolute inset-0 rounded-2xl bg-slate-700/70",
-              "flex items-center justify-center text-base font-medium text-slate-200",
+              "absolute inset-0 bg-slate-700/70",
+              variant === "large" ? "rounded-3xl" : "rounded-2xl",
+              "flex items-center justify-center font-medium text-slate-200",
+              variant === "large" ? "text-2xl md:text-3xl" : "text-base",
               "overflow-hidden",
               "[transform:rotateX(180deg)] [backface-visibility:hidden]",
             ].join(" ")}
           >
             <span className="flashcard-ribbon flashcard-ribbon--back">Back</span>
             {renderActionButton()}
-            <div className="flex h-full w-full items-center justify-center px-6 py-4">
-              <p className="flashcard-scroll max-h-full w-full overflow-y-auto pr-2 text-center break-all whitespace-pre-wrap">
+            <div
+              className={[
+                "flex h-full w-full items-center justify-center",
+                variant === "large" ? "px-10 py-12" : "px-6 py-4",
+              ].join(" ")}
+            >
+              <p
+                className={[
+                  "flashcard-scroll max-h-full w-full overflow-y-auto pr-2 text-center break-all whitespace-pre-wrap",
+                  variant === "large" ? "text-2xl leading-relaxed" : "",
+                ].join(" ")}
+              >
                 {card.back}
               </p>
             </div>
@@ -155,7 +208,7 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete }: FlashcardProps) => {
 
       <Collapse
         items={collapseItems}
-        size="small"
+        size={variant === "large" ? "default" : "small"}
         ghost
         className="flashcard-tags-collapse"
         expandIcon={({ isActive }) => (
