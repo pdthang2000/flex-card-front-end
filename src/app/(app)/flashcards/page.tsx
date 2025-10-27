@@ -250,6 +250,10 @@ const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) =
     }
   };
 
+  const handlePractice = () => {
+    message.info("Practice mode coming soon");
+  };
+
   const handleEdit = (card: FlashcardType) => {
     setEditingCard(card);
     form.setFieldsValue({
@@ -383,6 +387,9 @@ const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) =
           </Button>
           <Button className="flashcard-action-btn w-full sm:w-auto" type={flipAll ? "primary" : "default"} onClick={() => setFlipAll((s) => !s)}>
             {flipAll ? "Unflip All" : "Flip All"}
+          </Button>
+          <Button className="flashcard-action-btn w-full sm:w-auto" onClick={handlePractice}>
+            Practice
           </Button>
         </div>
         <div className="flex w-full sm:flex-1 sm:justify-end">
