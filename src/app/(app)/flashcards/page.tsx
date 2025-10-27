@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { Segmented, Button, Table, Space, Flex, Modal, Form, Input, App, Select, Pagination, Spin } from "antd";
-import { ClearOutlined } from "@ant-design/icons";
+import { ClearOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useListFlashcards, useUpdateFlashcard, useCreateFlashcard, useDeleteFlashcard } from "@/hooks/useFlashcards";
@@ -464,7 +464,7 @@ const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) =
         <div className="flex w-full flex-1 flex-col items-center gap-6">
           {activePracticeCard ? (
             <>
-              <div className="w-full">
+              <div className="flex w-full justify-center">
                 <Flashcard
                   key={activePracticeCard.id}
                   card={activePracticeCard}
@@ -475,14 +475,20 @@ const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) =
                 />
               </div>
               {cardsCount > 1 && (
-                <Space size="middle" wrap>
-                  <Button className="flashcard-action-btn" onClick={showPreviousPracticeCard}>
-                    Previous
-                  </Button>
-                  <Button className="flashcard-action-btn" type="primary" onClick={showNextPracticeCard}>
-                    Next
-                  </Button>
-                </Space>
+                <div className="flashcard-practice-nav flex items-center gap-4">
+                  <Button
+                    shape="circle"
+                    icon={<LeftOutlined />}
+                    onClick={showPreviousPracticeCard}
+                    aria-label="Previous card"
+                  />
+                  <Button
+                    shape="circle"
+                    icon={<RightOutlined />}
+                    onClick={showNextPracticeCard}
+                    aria-label="Next card"
+                  />
+                </div>
               )}
             </>
           ) : (

@@ -105,21 +105,23 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete, variant = "default" }: Fla
         ),
       },
     ],
-    [tags, variant]
+    [tags, variant, caretSize]
   );
 
   return (
     <div
       className={[
         "flex flex-col gap-3",
-        variant === "large" ? "w-full h-full gap-6" : "",
+        variant === "large"
+          ? "mx-auto w-full max-w-[min(92vw,900px)] sm:max-w-[66vw] gap-6"
+          : "",
       ].join(" ")}
     >
       <div
         className={[
           "relative [perspective:1200px]",
           variant === "large"
-            ? "h-[calc(100vh-10rem)] min-h-[420px] w-full sm:h-[calc(100vh-8rem)]"
+            ? "w-full h-[70vh] min-h-[420px] max-h-[720px] sm:h-[66vh]"
             : "h-36 sm:h-40 md:h-44",
         ].join(" ")}
       >
