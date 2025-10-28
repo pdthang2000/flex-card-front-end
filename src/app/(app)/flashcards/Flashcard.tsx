@@ -121,7 +121,7 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete, variant = "default" }: Fla
         className={[
           "relative [perspective:1200px]",
           variant === "large"
-            ? "w-full h-[70vh] min-h-[420px] max-h-[720px] sm:h-[66vh]"
+            ? "w-full flashcard-large"
             : "h-36 sm:h-40 md:h-44",
         ].join(" ")}
       >

@@ -489,7 +489,7 @@ const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) =
         )}
       </div>
       {isPracticeMode ? (
-        <div className="flex w-full flex-1 flex-col items-center gap-6">
+        <div className="flashcard-practice-area flex w-full flex-1 flex-col items-center gap-6">
           {activePracticeCard ? (
             <>
               <div className="flex w-full justify-center">
