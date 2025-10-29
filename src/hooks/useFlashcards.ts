@@ -3,12 +3,12 @@ import { get, api } from "@/lib/api";
 import { qk } from "@/lib/queryKeys";
 import type { FlashcardListResponse } from "@/types";
 
-export function useListFlashcards(params: { tagNames?: string; page: number; size: number }) {
-  const { tagNames, page, size } = params;
+export function useListFlashcards(params: { tagNames?: string; frontContains?: string; backContains?: string; page: number; size: number }) {
+  const { tagNames, frontContains, backContains, page, size } = params;
   return useQuery({
-    queryKey: qk.flashcards({ tagNames, page, size }),
+    queryKey: qk.flashcards({ tagNames, frontContains, backContains, page, size }),
     queryFn: () =>
-      get<FlashcardListResponse>("/flashcard", { tagNames, page, size }),
+      get<FlashcardListResponse>("/flashcard", { tagNames, frontContains, backContains, page, size }),
     placeholderData: (prev) => prev, // keepPreviousData
   });
 }

@@ -19,6 +19,8 @@ const FlashcardsPage = () => {
   const size = Number(sp.get("size") ?? 20);
   const layout = (sp.get("layout") ?? "board") as "board" | "table";
   const tagNamesParam = sp.get("tagNames") ?? "";
+  const frontContainsParam = sp.get("frontContains") ?? "";
+  const backContainsParam = sp.get("backContains") ?? "";
   const selectedTagNames = useMemo(
     () =>
       tagNamesParam
@@ -29,10 +31,33 @@ const FlashcardsPage = () => {
   );
 
   const [tagSearch, setTagSearch] = useState("");
+  const [frontContains, setFrontContains] = useState(frontContainsParam);
+  const [backContains, setBackSearch] = useState(backContainsParam);
+  const [isPracticeModeActive, setPracticeModeActive] = useState(false);
+
+  useEffect(() => {
+    setFrontContains(frontContainsParam);
+  }, [frontContainsParam]);
+
+  useEffect(() => {
+    setBackSearch(backContainsParam);
+  }, [backContainsParam]);
+
+  useEffect(() => {
+    if (layout !== "board" && isPracticeModeActive) {
+      setPracticeModeActive(false);
+    }
+  }, [layout, isPracticeModeActive]);
 
   const joinedTagNames = selectedTagNames.length ? selectedTagNames.join(",") : undefined;
 
-  const { data, isError, isFetching, isLoading } = useListFlashcards({ tagNames: joinedTagNames, page, size });
+  const { data, isError, isFetching, isLoading } = useListFlashcards({
+    tagNames: joinedTagNames,
+    frontContains: frontContainsParam || undefined,
+    backContains: backContainsParam || undefined,
+    page,
+    size,
+  });
   const isLoadingFlashcards = isLoading || isFetching;
 
   const { data: tagResponse, isFetching: isTagsFetching } = useListTags({
@@ -60,7 +85,7 @@ const FlashcardsPage = () => {
     return options;
   }, [tagResponse, selectedTagNames]);
 
-  const updateUrl = (updates: { layout?: string; page?: number; size?: number; tagNames?: string }) => {
+  const updateUrl = (updates: { layout?: string; page?: number; size?: number; tagNames?: string; front?: string; back?: string }) => {
     const qs = new URLSearchParams(sp.toString());
     if (updates.layout !== undefined) qs.set("layout", updates.layout);
     if (updates.page !== undefined) qs.set("page", String(updates.page));
@@ -70,6 +95,20 @@ const FlashcardsPage = () => {
         qs.set("tagNames", updates.tagNames);
       } else {
         qs.delete("tagNames");
+      }
+    }
+    if (updates.front !== undefined) {
+      if (updates.front) {
+        qs.set("frontContains", updates.front);
+      } else {
+        qs.delete("frontContains");
+      }
+    }
+    if (updates.back !== undefined) {
+      if (updates.back) {
+        qs.set("backContains", updates.back);
+      } else {
+        qs.delete("backContains");
       }
     }
     router.push(`/flashcards?${qs.toString()}`);
@@ -102,9 +141,41 @@ const FlashcardsPage = () => {
     setTagSearch(value.trim());
   };
 
+  const commitFrontSearch = (raw: string) => {
+    const next = raw.trim();
+    updateUrl({ front: next, page: 1 });
+  };
+
+  const commitBackSearch = (raw: string) => {
+    const next = raw.trim();
+    updateUrl({ back: next, page: 1 });
+  };
+
+  const handleFrontInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setFrontContains(value);
+    if (!value) {
+      updateUrl({ front: "", page: 1 });
+    }
+  };
+
+  const handleBackInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setBackSearch(value);
+    if (!value) {
+      updateUrl({ back: "", page: 1 });
+    }
+  };
+
+  const handlePracticeModeChange = useCallback((active: boolean) => {
+    setPracticeModeActive(active);
+  }, []);
+
   const handlePageChange = (nextPage: number, nextSize?: number) => {
     updateUrl({ page: nextPage, size: nextSize ?? pageSize });
   };
+
+  const showFilters = layout !== "board" || !isPracticeModeActive;
 
   return (
     <div className="min-h-screen bg-slate-900 text-white p-6 ">
@@ -125,33 +196,51 @@ const FlashcardsPage = () => {
         </Space>
       </Flex>
 
-      {/* Tag Filter */}
-      <div className="mb-6">
-        <Space.Compact style={{ width: '100%', maxWidth: 400 }}>
-          <Select<string>
-            mode="multiple"
-            showSearch
-            placeholder="Filter by tag name..."
-            values={selectedTagNames}
-            options={tagOptions}
-            onChange={handleTagChange}
-            onSearch={handleTagSearch}
-            allowClear
-            onClear={handleClearSearch}
-            filterOption={false}
-            loading={isTagsFetching}
-            notFoundContent={isTagsFetching ? "Loading..." : "No tags found"}
-            style={{ width: "100%" }}
-          />
-          {selectedTagNames.length > 0 && (
-            <Button 
-              icon={<ClearOutlined />} 
-              onClick={handleClearSearch}
-              title="Clear filter"
-            />
-          )}
-        </Space.Compact>
-      </div>
+      {/* Tag & Text Filters */}
+      {showFilters && (
+        <div className="mb-6">
+          <div className="flex w-full max-w-2xl flex-col gap-4">
+            <Space.Compact style={{ width: "100%", maxWidth: 400 }}>
+              <Select<string>
+                mode="multiple"
+                showSearch
+                placeholder="Filter by tag name..."
+                values={selectedTagNames}
+                options={tagOptions}
+                onChange={handleTagChange}
+                onSearch={handleTagSearch}
+                allowClear
+                onClear={handleClearSearch}
+                filterOption={false}
+                loading={isTagsFetching}
+                notFoundContent={isTagsFetching ? "Loading..." : "No tags found"}
+                style={{ width: "100%" }}
+              />
+              {selectedTagNames.length > 0 && (
+                <Button icon={<ClearOutlined />} onClick={handleClearSearch} title="Clear filter" />
+              )}
+            </Space.Compact>
+            <div className="grid w-full gap-3 sm:grid-cols-2">
+              <Input.Search
+                value={frontContains}
+                onChange={handleFrontInputChange}
+                onSearch={commitFrontSearch}
+                allowClear
+                placeholder="Search front text..."
+                enterButton
+              />
+              <Input.Search
+                value={backContains}
+                onChange={handleBackInputChange}
+                onSearch={commitBackSearch}
+                allowClear
+                placeholder="Search back text..."
+                enterButton
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       <Spin spinning={isLoadingFlashcards} tip="Loading flashcards..." className="w-full">
         {layout === "board" ? (
@@ -161,6 +250,7 @@ const FlashcardsPage = () => {
             size={pageSize}
             total={total}
             onPageChange={handlePageChange}
+            onPracticeModeChange={handlePracticeModeChange}
           />
         ) : (
           <SimpleTable items={items} />
@@ -182,9 +272,10 @@ type BoardViewProps = {
   size: number;
   total: number;
   onPageChange: (page: number, size: number) => void;
+  onPracticeModeChange?: (active: boolean) => void;
 };
 
-const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) => {
+const BoardView = ({ items, page, size, total, onPageChange, onPracticeModeChange }: BoardViewProps) => {
   const [cards, setCards] = useState(items);
   const [flipAll, setFlipAll] = useState(false);
   const [isShuffled, setIsShuffled] = useState(false);
@@ -231,6 +322,10 @@ const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) =
 
   const activePracticeCard = cards[practiceIndex] ?? null;
   const activePracticeCardId = activePracticeCard?.id;
+
+  useEffect(() => {
+    onPracticeModeChange?.(isPracticeMode);
+  }, [isPracticeMode, onPracticeModeChange]);
 
   useEffect(() => {
     setCards(items);
