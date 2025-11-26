@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { Segmented, Button, Table, Space, Flex, Modal, Form, Input, App, Select, Pagination, Spin } from "antd";
-import { ClearOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { ClearOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useListFlashcards, useUpdateFlashcard, useCreateFlashcard, useDeleteFlashcard } from "@/hooks/useFlashcards";
@@ -33,7 +33,6 @@ const FlashcardsPage = () => {
   const [tagSearch, setTagSearch] = useState("");
   const [frontContains, setFrontContains] = useState(frontContainsParam);
   const [backContains, setBackSearch] = useState(backContainsParam);
-  const [isPracticeModeActive, setPracticeModeActive] = useState(false);
 
   useEffect(() => {
     setFrontContains(frontContainsParam);
@@ -42,12 +41,6 @@ const FlashcardsPage = () => {
   useEffect(() => {
     setBackSearch(backContainsParam);
   }, [backContainsParam]);
-
-  useEffect(() => {
-    if (layout !== "board" && isPracticeModeActive) {
-      setPracticeModeActive(false);
-    }
-  }, [layout, isPracticeModeActive]);
 
   const joinedTagNames = selectedTagNames.length ? selectedTagNames.join(",") : undefined;
 
@@ -167,15 +160,26 @@ const FlashcardsPage = () => {
     }
   };
 
-  const handlePracticeModeChange = useCallback((active: boolean) => {
-    setPracticeModeActive(active);
-  }, []);
-
   const handlePageChange = (nextPage: number, nextSize?: number) => {
     updateUrl({ page: nextPage, size: nextSize ?? pageSize });
   };
 
-  const showFilters = layout !== "board" || !isPracticeModeActive;
+  const goToPractice = () => {
+    const qs = new URLSearchParams();
+    qs.set("page", String(page));
+    qs.set("size", String(size));
+    qs.set("layout", layout);
+    if (selectedTagNames.length) {
+      qs.set("tagNames", selectedTagNames.join(","));
+    }
+    if (frontContainsParam) {
+      qs.set("frontContains", frontContainsParam);
+    }
+    if (backContainsParam) {
+      qs.set("backContains", backContainsParam);
+    }
+    router.push(`/flashcards/practice?${qs.toString()}`);
+  };
 
   return (
     <div className="min-h-screen bg-slate-900 text-white p-6 ">
@@ -185,6 +189,7 @@ const FlashcardsPage = () => {
           <Button type="primary" onClick={toggleLayout}>
             Switch to {layout === "board" ? "Table" : "Board"} View
           </Button>
+          <Button onClick={goToPractice}>Practice</Button>
           <Segmented
             options={[
               { label: "Board", value: "board" },
@@ -197,50 +202,48 @@ const FlashcardsPage = () => {
       </Flex>
 
       {/* Tag & Text Filters */}
-      {showFilters && (
-        <div className="mb-6">
-          <div className="flex w-full max-w-2xl flex-col gap-4">
-            <Space.Compact style={{ width: "100%", maxWidth: 400 }}>
-              <Select<string>
-                mode="multiple"
-                showSearch
-                placeholder="Filter by tag name..."
-                values={selectedTagNames}
-                options={tagOptions}
-                onChange={handleTagChange}
-                onSearch={handleTagSearch}
-                allowClear
-                onClear={handleClearSearch}
-                filterOption={false}
-                loading={isTagsFetching}
-                notFoundContent={isTagsFetching ? "Loading..." : "No tags found"}
-                style={{ width: "100%" }}
-              />
-              {selectedTagNames.length > 0 && (
-                <Button icon={<ClearOutlined />} onClick={handleClearSearch} title="Clear filter" />
-              )}
-            </Space.Compact>
-            <div className="grid w-full gap-3 sm:grid-cols-2">
-              <Input.Search
-                value={frontContains}
-                onChange={handleFrontInputChange}
-                onSearch={commitFrontSearch}
-                allowClear
-                placeholder="Search front text..."
-                enterButton
-              />
-              <Input.Search
-                value={backContains}
-                onChange={handleBackInputChange}
-                onSearch={commitBackSearch}
-                allowClear
-                placeholder="Search back text..."
-                enterButton
-              />
-            </div>
+      <div className="mb-6">
+        <div className="flex w-full max-w-2xl flex-col gap-4">
+          <div className="flex w-full flex-col gap-2">
+            <Select<string>
+              mode="multiple"
+              showSearch
+              placeholder="Filter by tag name..."
+              values={selectedTagNames}
+              options={tagOptions}
+              onChange={handleTagChange}
+              onSearch={handleTagSearch}
+              allowClear
+              onClear={handleClearSearch}
+              filterOption={false}
+              loading={isTagsFetching}
+              notFoundContent={isTagsFetching ? "Loading..." : "No tags found"}
+              style={{ width: "100%", maxWidth: 400 }}
+            />
+            {selectedTagNames.length > 0 && (
+              <Button className="self-start" icon={<ClearOutlined />} onClick={handleClearSearch} title="Clear filter" />
+            )}
+          </div>
+          <div className="flex w-full flex-col gap-3">
+            <Input.Search
+              value={frontContains}
+              onChange={handleFrontInputChange}
+              onSearch={commitFrontSearch}
+              allowClear
+              placeholder="Search front text..."
+              enterButton
+            />
+            <Input.Search
+              value={backContains}
+              onChange={handleBackInputChange}
+              onSearch={commitBackSearch}
+              allowClear
+              placeholder="Search back text..."
+              enterButton
+            />
           </div>
         </div>
-      )}
+      </div>
 
       <Spin spinning={isLoadingFlashcards} tip="Loading flashcards..." className="w-full">
         {layout === "board" ? (
@@ -250,7 +253,6 @@ const FlashcardsPage = () => {
             size={pageSize}
             total={total}
             onPageChange={handlePageChange}
-            onPracticeModeChange={handlePracticeModeChange}
           />
         ) : (
           <SimpleTable items={items} />
@@ -272,18 +274,15 @@ type BoardViewProps = {
   size: number;
   total: number;
   onPageChange: (page: number, size: number) => void;
-  onPracticeModeChange?: (active: boolean) => void;
 };
 
-const BoardView = ({ items, page, size, total, onPageChange, onPracticeModeChange }: BoardViewProps) => {
+const BoardView = ({ items, page, size, total, onPageChange }: BoardViewProps) => {
   const [cards, setCards] = useState(items);
   const [flipAll, setFlipAll] = useState(false);
   const [isShuffled, setIsShuffled] = useState(false);
   const [editingCard, setEditingCard] = useState<FlashcardType | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const [isCreateOpen, setCreateOpen] = useState(false);
-  const [isPracticeMode, setPracticeMode] = useState(false);
-  const [practiceIndex, setPracticeIndex] = useState(0);
   const [form] = Form.useForm();
   const [createForm] = Form.useForm();
   const updateFlashcard = useUpdateFlashcard();
@@ -318,47 +317,11 @@ const BoardView = ({ items, page, size, total, onPageChange, onPracticeModeChang
     return base;
   }, [availableTags, editingCard]);
 
-  const cardsCount = cards.length;
-
-  const activePracticeCard = cards[practiceIndex] ?? null;
-  const activePracticeCardId = activePracticeCard?.id;
-
-  useEffect(() => {
-    onPracticeModeChange?.(isPracticeMode);
-  }, [isPracticeMode, onPracticeModeChange]);
-
   useEffect(() => {
     setCards(items);
-
-    if (!items.length) {
-      setPracticeIndex(0);
-      setFlipAll(false);
-      setIsShuffled(false);
-      if (isPracticeMode) {
-        setPracticeMode(false);
-      }
-      return;
-    }
-
-    if (isPracticeMode) {
-      if (activePracticeCardId) {
-        const nextIndex = items.findIndex((card) => card.id === activePracticeCardId);
-        if (nextIndex >= 0) {
-          setPracticeIndex(nextIndex);
-          return;
-        }
-      }
-      // Keep the current practice position when possible; otherwise clamp to the last available card.
-      setPracticeIndex((prev) => {
-        const fallback = Math.min(prev, items.length - 1);
-        return fallback >= 0 ? fallback : 0;
-      });
-    } else {
-      setPracticeIndex(0);
-      setFlipAll(false);
-      setIsShuffled(false);
-    }
-  }, [items, isPracticeMode, activePracticeCardId]);
+    setFlipAll(false);
+    setIsShuffled(false);
+  }, [items]);
 
   const shuffleItems = useCallback(() => {
     const shuffled = [...items];
@@ -377,49 +340,7 @@ const BoardView = ({ items, page, size, total, onPageChange, onPracticeModeChang
       setCards(shuffleItems());
       setIsShuffled(true);
     }
-    if (isPracticeMode) {
-      setPracticeIndex(0);
-    }
   };
-
-  useEffect(() => {
-    if (!cards.length && isPracticeMode) {
-      setPracticeMode(false);
-      return;
-    }
-    if (isPracticeMode && practiceIndex >= cards.length) {
-      setPracticeIndex(0);
-    }
-  }, [cards, isPracticeMode, practiceIndex]);
-
-  const handlePracticeToggle = () => {
-    if (!cards.length) {
-      message.info("No flashcards available to practice.");
-      return;
-    }
-    setPracticeMode((prev) => {
-      const next = !prev;
-      if (next) {
-        setFlipAll(false);
-        setPracticeIndex(0);
-      }
-      return next;
-    });
-  };
-
-  const showPreviousPracticeCard = useCallback(() => {
-    if (!cardsCount) {
-      return;
-    }
-    setPracticeIndex((prev) => (prev - 1 + cardsCount) % cardsCount);
-  }, [cardsCount]);
-
-  const showNextPracticeCard = useCallback(() => {
-    if (!cardsCount) {
-      return;
-    }
-    setPracticeIndex((prev) => (prev + 1) % cardsCount);
-  }, [cardsCount]);
 
   const handleEdit = (card: FlashcardType) => {
     setEditingCard(card);
@@ -563,76 +484,22 @@ const BoardView = ({ items, page, size, total, onPageChange, onPracticeModeChang
           >
             {flipAll ? "Unflip All" : "Flip All"}
           </Button>
-          <Button
-            className="flashcard-action-btn w-full sm:w-auto"
-            type={isPracticeMode ? "primary" : "default"}
-            onClick={handlePracticeToggle}
-          >
-            {isPracticeMode ? "Exit Practice" : "Practice"}
-          </Button>
         </div>
-        {!isPracticeMode && (
-          <div className="flex w-full sm:flex-1 sm:justify-end">
-            <FlashcardsPagination
-              page={page}
-              size={size}
-              total={total}
-              onChange={onPageChange}
-              containerClassName="w-full sm:w-auto sm:flex-none"
-            />
-          </div>
-        )}
+        <div className="flex w-full sm:flex-1 sm:justify-end">
+          <FlashcardsPagination
+            page={page}
+            size={size}
+            total={total}
+            onChange={onPageChange}
+            containerClassName="w-full sm:w-auto sm:flex-none"
+          />
+        </div>
       </div>
-      {isPracticeMode ? (
-        <div className="flashcard-practice-area flex w-full flex-1 flex-col items-center gap-6">
-          {activePracticeCard ? (
-            <>
-              <div className="flex w-full justify-center">
-                <Flashcard
-                  key={activePracticeCard.id}
-                  card={activePracticeCard}
-                  flipAll={flipAll}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  variant="large"
-                />
-              </div>
-              <div className="flashcard-practice-nav flex items-center gap-6">
-                <Button
-                  className="flashcard-practice-nav__control flashcard-practice-nav__control--prev"
-                  size="large"
-                  icon={<LeftOutlined />}
-                  onClick={showPreviousPracticeCard}
-                  aria-label="Previous card"
-                  disabled={cardsCount <= 1}
-                />
-                <span className="flashcard-practice-nav__counter">
-                  {cardsCount ? `${practiceIndex + 1}/${cardsCount}` : "0/0"}
-                </span>
-                <Button
-                  className="flashcard-practice-nav__control flashcard-practice-nav__control--next"
-                  type="primary"
-                  size="large"
-                  icon={<RightOutlined />}
-                  onClick={showNextPracticeCard}
-                  aria-label="Next card"
-                  disabled={cardsCount <= 1}
-                />
-              </div>
-            </>
-          ) : (
-            <div className="flex h-64 w-full items-center justify-center rounded-2xl border border-dashed border-slate-600 text-slate-300">
-              No flashcards available.
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
-          {cards.map((c) => (
-            <Flashcard key={c.id} card={c} flipAll={flipAll} onEdit={handleEdit} onDelete={handleDelete} />
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
+        {cards.map((c) => (
+          <Flashcard key={c.id} card={c} flipAll={flipAll} onEdit={handleEdit} onDelete={handleDelete} />
+        ))}
+      </div>
       <Modal
         title="Add Flashcard"
         open={isCreateOpen}

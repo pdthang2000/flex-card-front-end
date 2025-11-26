@@ -203,7 +203,7 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete, variant = "default" }: Fla
         items={collapseItems}
         ghost
         expandIcon={({ isActive }) => (
-          <>
+          <div>
             <CaretRightOutlined
               rotate={isActive ? 90 : 0}
               style={{color: "#fff", fontSize: caretSize, paddingRight: "0.5rem"}}
@@ -219,7 +219,7 @@ const Flashcard = ({ card, flipAll, onEdit, onDelete, variant = "default" }: Fla
             >
             Tags{tags.length ? ` (${tags.length})` : ""}
           </span>
-          </>
+          </div>
         )}
       />
     </div>
