@@ -2,7 +2,6 @@
 
 import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { Segmented, Button, Table, Space, Flex, Modal, Form, Input, App, Select, Pagination, Spin } from "antd";
-import { ClearOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useListFlashcards, useUpdateFlashcard, useCreateFlashcard, useDeleteFlashcard } from "@/hooks/useFlashcards";
@@ -51,7 +50,19 @@ const FlashcardsPage = () => {
     page,
     size,
   });
-  const isLoadingFlashcards = isLoading || isFetching;
+  const [forceLoading, setForceLoading] = useState(false);
+
+  useEffect(() => {
+    if (isLoading || isFetching) {
+      setForceLoading(true);
+      const timer = setTimeout(() => setForceLoading(false), 300);
+      return () => clearTimeout(timer);
+    }
+    const timer = setTimeout(() => setForceLoading(false), 300);
+    return () => clearTimeout(timer);
+  }, [isLoading, isFetching]);
+
+  const isLoadingFlashcards = isLoading || isFetching || forceLoading;
 
   const { data: tagResponse, isFetching: isTagsFetching } = useListTags({
     page: 1,
@@ -209,7 +220,7 @@ const FlashcardsPage = () => {
               mode="multiple"
               showSearch
               placeholder="Filter by tag name..."
-              values={selectedTagNames}
+              value={selectedTagNames}
               options={tagOptions}
               onChange={handleTagChange}
               onSearch={handleTagSearch}
@@ -220,9 +231,6 @@ const FlashcardsPage = () => {
               notFoundContent={isTagsFetching ? "Loading..." : "No tags found"}
               style={{ width: "100%", maxWidth: 400 }}
             />
-            {selectedTagNames.length > 0 && (
-              <Button className="self-start" icon={<ClearOutlined />} onClick={handleClearSearch} title="Clear filter" />
-            )}
           </div>
           <div className="flex w-full flex-col gap-3">
             <Input.Search
